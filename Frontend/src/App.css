@@ -62,13 +62,14 @@ body {
 
 
 .auth-btn-yellow {
-  width: 70%;
-  font-size: 18px;
+  width: 60%;
+  font-size: 25px;
   padding: 12px;
   margin-bottom: 20px;
+  margin-top: 77px;
   font-weight: 600;
   font-family: 'Gentium Book Basic', serif;
-  border-radius: 25px;
+  border-radius: 20px;
   cursor: pointer;
   text-align: center;
   border: none;
@@ -152,6 +153,19 @@ body {
   color: black;
 }
 
+.auth-error {
+  color: #ff4d4d; /* Red color for warning */
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: center;
+  background-color: rgba(255, 77, 77, 0.1); /* Light red background */
+  padding: 8px;
+  border-radius: 5px;
+  width: 60%;
+  border: 1px solid #ff4d4d;
+}
+
+
 
 /*Registration Page*/
 .Regi-left {
@@ -197,12 +211,13 @@ body {
   font-size: 22px;
 }
 
-.Regi-input:nth-child(3) { 
-  grid-column: span 2; /* Email input spans both columns */
+
+.Regi-input::placeholder {
+  color: #d1d5db;
 }
 
 
-.Regi-input::placeholder {
+.dropdown{
   color: #d1d5db;
 }
 
