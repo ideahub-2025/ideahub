@@ -1,0 +1,243 @@
+/* App.css */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic:wght@400;700&display=swap');
+
+
+body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6; 
+}
+
+/*Login Page*/
+
+/* Centering the container */
+.page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Auth card styling */
+.auth-card {
+  display: flex;
+  width: 1000px;
+  height: 500px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Left side (Signup) */
+.auth-left {
+  width: 40%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.auth-logo {
+  width: 120px;
+  margin-bottom: -17px;
+}
+
+.auth-title {
+  font-size: 22px;
+  font-weight: 100;
+  font-family: Arima;
+  color: black;
+  margin-bottom: 56px;
+}
+
+
+
+.auth-btn-yellow {
+  width: 60%;
+  font-size: 25px;
+  padding: 12px;
+  margin-bottom: 20px;
+  margin-top: 77px;
+  font-weight: 600;
+  font-family: 'Gentium Book Basic', serif;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  transition: 0.3s ease;
+  background-color: #FDBB1A;
+  color: black;
+}
+
+.auth-btn-yellow:hover {
+  background-color: #eab308;
+}
+
+/* Right side (Login) */
+.auth-right {
+  width: 60%;
+  background: #262626;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.auth-signin-title {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 50px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.auth-input {
+  width: 60%;
+  margin-bottom: 20px;
+  background-color: #FFFFFF;
+  opacity: 80%;
+  font-family: Arima;
+  border-radius: 7px;
+  outline: none;
+  border: none;
+  color: black;
+  font-size: 26px;
+  text-align: center;
+}
+
+.auth-input::placeholder {
+  color: #d1d5db;
+}
+
+.auth-forgot {
+  color: #858585;
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 18px;
+  margin-bottom: 35px;
+  text-decoration:underline;
+}
+
+.auth-forgot:hover {
+  text-decoration: underline;
+}
+
+.auth-btn-white {
+  width: 30%;
+  background-color: #262626;
+  border: white solid 2px;
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 25px;
+  padding: 12px;
+  margin-bottom: 40px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.3s ease;
+ 
+}
+
+.auth-btn-white:hover {
+  background-color: white;
+  color: black;
+}
+
+.auth-error {
+  color: #ff4d4d; /* Red color for warning */
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: center;
+  background-color: rgba(255, 77, 77, 0.1); /* Light red background */
+  padding: 8px;
+  border-radius: 5px;
+  width: 60%;
+  border: 1px solid #ff4d4d;
+}
+
+
+
+/*Registration Page*/
+.Regi-left {
+  width: 30%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.Regi-right {
+  width: 70%;
+  background: #262626;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.Regi-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.Regi-input {
+  padding: 3px;
+  font-family: 'Arima', sans-serif;
+  border-radius: 7px;
+  opacity: 80%;
+  background-color: #FFFFFF;
+  outline: none;
+  border: none;
+  color: black;
+  font-size: 22px;
+}
+
+
+.Regi-input::placeholder {
+  color: #d1d5db;
+}
+
+
+.dropdown{
+  color: #d1d5db;
+}
+
+.Regi-btn-yellow {
+  width: 70%;
+  font-size: 25px;
+  padding: 12px;
+  margin-bottom: 20px;
+  margin-top: 77px;
+  font-weight: 600;
+  font-family: 'Gentium Book Basic', serif;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  transition: 0.3s ease;
+  background-color: #FDBB1A;
+  color: black;
+}
+
+.Regi-btn-yellow:hover {
+  background-color: #eab308;
+}
