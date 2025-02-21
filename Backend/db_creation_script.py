@@ -16,7 +16,7 @@ db.create_collection("follows")
 db.create_collection("reports")
 db.create_collection("admin_managements")
 db.create_collection("admins")
-
+#test
 # Sample index creation
 db.investors.create_index("user_id")
 db.ideas.create_index("user_id")

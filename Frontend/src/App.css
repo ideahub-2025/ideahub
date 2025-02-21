@@ -240,4 +240,59 @@ body {
 
 .Regi-btn-yellow:hover {
   background-color: #eab308;
+<<<<<<< HEAD
 }
+=======
+}
+/* investor form */
+
+.investor-form-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.investor-form-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.investor-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.investor-input {
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.investor-dropdown {
+  appearance: none;
+  background-color: #fff;
+}
+
+.investor-submit-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.investor-submit-btn:hover {
+  background-color: #0056b3;
+}
+>>>>>>> 5c5fb8b6df2a6cafaa254f1b013c0993acac1298
