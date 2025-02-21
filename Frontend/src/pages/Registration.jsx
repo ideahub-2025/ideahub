@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import '../App.css'; 
+//test
 export default function RegistPage() {
   const navigate = useNavigate();
   const goToSignin = () => {
