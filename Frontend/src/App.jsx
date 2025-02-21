@@ -10,8 +10,6 @@ export default function AppRoutes() {
       <Routes>
         <Route index element={<AuthPage />} />
         <Route path="/register" element={<RegistPage />} />
-        <Route path="/test" element={<Test />} />
-        <Route path="/another" element={<Another />} />
       </Routes>
     </Router>
   );
