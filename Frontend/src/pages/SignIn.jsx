@@ -35,7 +35,6 @@ export default function AuthPage() {
             <img src={logo} alt="Idea Hub Logo" className="auth-logo" />
             <h2 className="auth-title">Start your journey with us!</h2>
             <button className="auth-btn-yellow" onClick={goToRegister}>Sign Up</button>
-            <button className="auth-btn-yellow" onClick={goToInvestor}>Investor</button>
           </div>
           <div className="auth-right">
             <h2 className="auth-signin-title">SIGN IN</h2>
