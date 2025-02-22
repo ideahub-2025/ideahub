@@ -1,13 +1,15 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from .models import UserProfile
+from .models import UserProfile  # Ensure the correct import
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = "__all__"
+        fields = '__all__'
 
-    def validate_password(self, value):
-        """Ensure the password meets security requirements."""
-        if len(value) < 8 or not any(char.isdigit() for char in value) or not any(char in "@$!%*?&" for char in value):
-            raise serializers.ValidationError("Password must be at least 8 characters long, include one number, and one special character.")
-        return value
+    # def create(self, validated_data):
+    #     password = validated_data.pop('password')
+    #     # Hash the password before saving
+    #     validated_data['password'] = make_password(password)
+    #     user_profile = UserProfile.objects.create(**validated_data)
+    #     return user_profile
