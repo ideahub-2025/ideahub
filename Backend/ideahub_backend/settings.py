@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "api",
     "djongo",  # Added Djongo to the installed apps
+    'corsheaders',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "ideahub_backend.urls"
@@ -65,23 +68,46 @@ DATABASES = {
         "NAME": MONGO_DB_NAME,
         "ENFORCE_SCHEMA": False,
         "CLIENT": {
-            "host": 'mongodb+srv://ideahub:idea123@cluster0.uw8l5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-,
+            "host": 'mongodb+srv://ideahub:idea123@cluster0.uw8l5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
             'serverSelectionTimeoutMS': 50000,  # Increase the timeout to 50 seconds
             'ssl': True,
         },
     }
 }
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'ideahub_backend.parsers.CamelCaseJSONParser',  # Add this to support camelCase input
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'ideahub_backend.renderers.CamelCaseJSONRenderer',  # Add this to support camelCase output
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+
+
 }
 
 STATIC_URL = "/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+
+]
+MIGRATION_MODULES = {
+    'auth': None,
+    'contenttypes': None,
+}
+
+
+
