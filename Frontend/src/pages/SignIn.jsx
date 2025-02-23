@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import '../App.css'; // Assuming you have the CSS file in the same directory
+import ResetPassword from './ResetPassword';
 import axios from 'axios';
 
 export default function AuthPage() {
@@ -9,7 +10,9 @@ export default function AuthPage() {
   const goToRegister = () => {
     navigate("/register"); // Navigate to registration page
   };
-
+const goToReset = () => {
+    navigate("/reset-password"); // Navigate to reset password page
+}
   /* Validation part */
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -99,7 +102,7 @@ export default function AuthPage() {
               required
             />
             
-            <a href="#" className="auth-forgot">Forgot your password?</a>
+            <a href="#" className="auth-forgot" onClick={goToReset}>Forgot your password?</a>
             
             <button className="auth-btn auth-btn-white" onClick={handleSignIn}>Sign In</button>
           </div>
