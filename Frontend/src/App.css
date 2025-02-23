@@ -133,7 +133,7 @@ body {
 }
 
 .auth-btn-white {
-  width: 30%;
+  width: 50%;
   background-color: #262626;
   border: white solid 2px;
   font-family: 'Gentium Book Basic', serif;
@@ -226,7 +226,7 @@ body {
   font-size: 25px;
   padding: 12px;
   margin-bottom: 20px;
-  margin-top: 77px;
+  margin-top: 40px;
   font-weight: 600;
   font-family: 'Gentium Book Basic', serif;
   border-radius: 20px;
@@ -240,59 +240,117 @@ body {
 
 .Regi-btn-yellow:hover {
   background-color: #eab308;
-<<<<<<< HEAD
-}
-=======
-}
-/* investor form */
-
-.investor-form-container {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.investor-form-title {
+
+.regi-btn-white {
+  width: 50%;
+  background-color: #262626;
+  border: white solid 2px;
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 25px;
+  padding: 12px;
+  margin-bottom: 40px;
+  margin-top: 10px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
   text-align: center;
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
+  transition: 0.3s ease;
+  margin-left: 80%;
+ 
 }
 
-.investor-form {
+
+/*Reset Password Page*/
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.form-box {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+}
+
+.reset{
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 25px;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  margin-top: -25px;
+}
+
+.reset-form {
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
-.investor-input {
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+.input-group {
+  align-items: center;
+  width: 100%;
 }
 
-.investor-dropdown {
-  appearance: none;
-  background-color: #fff;
-}
-
-.investor-submit-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 10px;
+.input-field {
+  width: 300px;
+  padding: 3px;
+  font-family: 'Arima', sans-serif;
+  border-radius: 7px;
+  background-color: black;
+  outline: none;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
+  color: white;
+  font-size: 20px;
 }
 
-.investor-submit-btn:hover {
-  background-color: #0056b3;
+.input-field::placeholder {
+  color: #d1d5db;
+  text-align: center;
 }
->>>>>>> 5c5fb8b6df2a6cafaa254f1b013c0993acac1298
+
+.input-field:focus {
+  outline: none;
+  border-color: #FFB800;
+  box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.2);
+}
+
+.submit-btn {
+  width: 250px;
+  font-size: 20px;
+  padding: 10px;
+  margin: 0 auto 20px auto;
+  font-weight: 600;
+  font-family: 'Gentium Book Basic', serif;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  transition: 0.3s ease;
+  background-color: #FDBB1A;
+  color: black;
+}
+
+.submit-btn:hover {
+  background-color: #F2AE00;
+  transform: translateY(-1px);
+}
+
