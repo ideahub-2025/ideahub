@@ -10,7 +10,9 @@ export default function AuthPage() {
   const goToRegister = () => {
     navigate("/register"); // Navigate to registration page
   };
-
+const goToReset = () => {
+    navigate("/reset-password"); // Navigate to reset password page
+}
   /* Validation part */
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
