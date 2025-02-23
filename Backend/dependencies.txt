@@ -1,2 +1,0 @@
-py -m pip install Django==5.1.6
-Python 3.13.2 
