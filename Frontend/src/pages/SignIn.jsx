@@ -2,20 +2,24 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import '../App.css'; // Assuming you have the CSS file in the same directory
+import ResetPassword from './ResetPassword';
+import axios from 'axios';
 
 export default function AuthPage() {
   const navigate = useNavigate();
   const goToRegister = () => {
     navigate("/register"); // Navigate to registration page
   };
-
-
-  /*validation part*/
+const goToReset = () => {
+    navigate("/reset-password"); // Navigate to reset password page
+}
+  /* Validation part */
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // Error stat
+  const [error, setError] = useState(""); // Error state
+  const [successMessage, setSuccessMessage] = useState(""); // Success message state
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     // Check if fields are empty
     if (username.trim() === "" || password.trim() === "") {
       setError("Both Username and Password are required!");
@@ -23,10 +27,41 @@ export default function AuthPage() {
     }
 
     setError(""); // Clear error if inputs are valid
-    console.log("Sign-in successful with:", { username, password });
-    // Add authentication logic here (API call, etc.)
+
+    const userData = { username, password };
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/signin/', userData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Assuming the response contains the token and user role
+      console.log(response.data);
+      setSuccessMessage("Sign-in successful! Redirecting...");
+
+      // Store tokens and user data in localStorage
+      localStorage.setItem('refreshToken', response.data.refresh);
+      localStorage.setItem('accessToken', response.data.access);
+      localStorage.setItem('username', response.data.username);
+      localStorage.setItem('role', response.data.role);
+
+      // Redirect to dashboard based on role
+      if (response.data.role === "entrepreneur") {
+        navigate("/entrepreneur-dashboard");  // Redirect to Entrepreneur dashboard
+      } else if (response.data.role === "investor") {
+        navigate("/investor-dashboard");  // Redirect to Investor dashboard
+      } else {
+        navigate("/default-dashboard");  // Default dashboard if role is unknown
+      }
+
+    } catch (error) {
+      console.error("There was an error during sign-in:", error);
+      const errorMessage = error.response ? error.response.data.error || "Sign-in failed! Please try again." : "Network error. Please try again.";
+      setError(errorMessage);  // Set the error message to display
+    }
   };
-  
 
   return (
     <div className="page-container"> 
@@ -42,7 +77,12 @@ export default function AuthPage() {
           {/* Right Section - Login */}
           <div className="auth-right">
             <h2 className="auth-signin-title">SIGN IN</h2>
-            {error && <p className="auth-error">{error}</p>} {/* Error message */}
+
+            {/* Success message */}
+            {successMessage && <p className="auth-success">{successMessage}</p>}
+
+            {/* Error message */}
+            {error && <p className="auth-error">{error}</p>} 
 
             <input 
               type="text" 
@@ -62,8 +102,7 @@ export default function AuthPage() {
               required
             />
             
-            
-            <a href="#" className="auth-forgot">Forgot your password?</a>
+            <a href="#" className="auth-forgot" onClick={goToReset}>Forgot your password?</a>
             
             <button className="auth-btn auth-btn-white" onClick={handleSignIn}>Sign In</button>
           </div>
