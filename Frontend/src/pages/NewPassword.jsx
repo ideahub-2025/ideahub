@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // useParams for getting uid and token from URL
 import logo from "../assets/logo.png";
 import "../App.css";
 
@@ -7,22 +7,24 @@ export default function NewPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const oldPassword = "OldPassword123!"; // write here the fetch from backend
+  const [successMessage, setSuccessMessage] = useState("");
 
+  const { uidb64, token } = useParams(); // Get uid and token from URL
+  const navigate = useNavigate();
+
+  // Password validation regex
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return passwordRegex.test(password);
   };
 
-  const handleSubmit = (e) => {
+  // Submit handler for resetting the password
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
 
-    if (newPassword === oldPassword) {
-      setError("New password cannot be the same as the old password.");
-      return;
-    }
-
+    // Validate new password
     if (!validatePassword(newPassword)) {
       setError(
         "Password must be at least 8 characters long, with at least one number and one symbol."
@@ -30,13 +32,36 @@ export default function NewPassword() {
       return;
     }
 
+    // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // Proceed with form submission (send to backend, etc.)
-    console.log("Password successfully updated!");
+    // Make API call to reset the password
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/reset-password/${uidb64}/${token}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ new_password: newPassword }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccessMessage("Password reset successful! Redirecting to Sign In...");
+        setTimeout(() => navigate('/'), 500);  // Redirect to login after 3 seconds
+      } else {
+        setError(data.error || "An unexpected error occurred. Please try again.");
+      }
+    } catch (error) {
+      setError("An error occurred while resetting the password. Please try again later.");
+    }
   };
 
   return (
@@ -48,6 +73,7 @@ export default function NewPassword() {
         <h2 className="reset">Create New Password</h2>
         <form className="reset-form" onSubmit={handleSubmit}>
           {error && <p className="error-message">{error}</p>}
+          {successMessage && <p className="success-message">{successMessage}</p>}
           <div className="input-group">
             <input
               type="password"

@@ -354,3 +354,16 @@ body {
   transform: translateY(-1px);
 }
 
+.error-message{
+  color: #ff4d4d; /* Red color for warning */
+  width: 300px;
+  font-family: 'Arima', sans-serif;
+  font-size: 16px;
+}
+
+.success-message{
+  color: #00cc00; /* Green color for success */
+  width: 300px;
+  font-family: 'Arima', sans-serif;
+  font-size: 16px;
+}
