@@ -8,7 +8,7 @@ import axios from 'axios';
 export default function RegistPage() {
   const navigate = useNavigate();
   const goToSignin = () => {
-    navigate("/signin"); // Navigate to sign-in page
+    navigate("/"); // Navigate to sign-in page
   };
 
   const [fullName, setFullName] = useState("");
@@ -74,7 +74,7 @@ export default function RegistPage() {
       setSuccessMessage("Registration successful! You can now sign in.");
       // Redirect to sign-in page after a successful registration
       setTimeout(() => {
-        navigate("/signin");
+        navigate("/");
       }, 2000);  // Redirect after 2 seconds
     })
     .catch(error => {
