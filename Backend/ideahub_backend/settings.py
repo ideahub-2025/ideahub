@@ -111,3 +111,31 @@ MIGRATION_MODULES = {
 
 
 
+# settings.py
+# Email settings in settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ideahub2025@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'fjau dyhe naos agfb'  # Your Gmail password or App Password
+HOST_URL = "http://localhost:5173"  # Adjust the URL as needed
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR / 'templates',  # Add this line if your templates are in the 'templates' directory in the base folder
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
