@@ -4,6 +4,7 @@ import RegistPage from "./pages/Registration";  // Ensure correct path
 import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
 import UserForm from "./pages/UserForm";
+import InvestorForm from "./pages/InvestorForm";
 
 
 export default function AppRoutes() {
@@ -15,6 +16,7 @@ export default function AppRoutes() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/user-form" element={<UserForm />} />
+        <Route path="/investor-form" element={<InvestorForm />} />
       </Routes>
     </Router>
   );
