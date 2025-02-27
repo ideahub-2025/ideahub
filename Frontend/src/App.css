@@ -6,7 +6,6 @@
 
 
 body {
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -366,4 +365,284 @@ body {
   width: 300px;
   font-family: 'Arima', sans-serif;
   font-size: 16px;
+}
+
+/*Form Page*/
+
+
+.userform-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.userform-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.userform-header h1 {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.userform-header p {
+  color: #666;
+  font-size: 16px;
+  font-family: 'Arima', sans-serif;
+}
+
+/* Form Sections */
+.userform-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.userform-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.userform-header h1 {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.userform-header p {
+  color: #666;
+  font-size: 16px;
+  font-family: 'Arima', sans-serif;
+}
+
+/* Form Sections */
+.form-section {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border-left: 4px solid #FDBB1A;
+}
+
+.section-header h2 {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.section-header p {
+  color: #777;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+/* Form Layout - Two Column */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: span 2;
+}
+
+.form-group label {
+  font-size: 15px;
+  font-weight: 600; /* Bolder label */
+  margin-bottom: 6px;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px;
+  font-size: 16px;
+  font-family: 'Arima', sans-serif;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.2s ease;
+  background: white;
+}
+
+/* Placeholder styles */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  font-weight: 400; /* Lighter weight for placeholders */
+  font-size: 14px; /* Smaller font size for placeholders */
+  color: #aaa; /* Lighter color for better visual hierarchy */
+  font-style: italic; /* Makes placeholders more distinct */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #FDBB1A;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Upload Section */
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ddd;
+  padding: 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+  background: white;
+  transition: border 0.2s ease;
+}
+
+.upload-zone:hover {
+  border-color: #FDBB1A;
+}
+
+.upload-zone .upload-icon {
+  width: 30px;
+  height: 30px;
+  color: #777;
+  margin-bottom: 8px;
+}
+
+.upload-zone span {
+  font-size: 14px;
+  color: #666;
+}
+
+.file-input {
+  display: none;
+}
+
+/* Social Links */
+.social-links-section {
+  margin-top: 20px;
+}
+
+.social-links-section h3 {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #262626;
+}
+
+.social-links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.icon-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-icon {
+  width: 18px;
+  height: 18px;
+  color: #FDBB1A;
+}
+
+/* Character Counter */
+.char-count {
+  font-size: 13px;
+  color: #888;
+  margin-top: 5px;
+  text-align: right;
+}
+
+/* Required Field Indicator */
+.required {
+  color: #FDBB1A;
+  font-weight: bold;
+}
+
+/* Buttons */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn-primary {
+  background: #FDBB1A;
+  color: #262626;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Gentium Book Basic', serif;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #eab308;
+}
+
+.btn-secondary {
+  background: white;
+  color: #555;
+  border: 1px solid #ddd;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Gentium Book Basic', serif;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #f5f5f5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-grid,
+  .social-links-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-group.full-width {
+    grid-column: 1;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+  }
 }
