@@ -1,15 +1,12 @@
-"use client"
 
 import { useState, useRef } from "react"
 import { Camera, Mail, Phone, Linkedin, Twitter } from "lucide-react"
 import "../App.css"
 export default function UserForm() {
   const [formData, setFormData] = useState({
-    name: "",
     role: "",
     location: "",
     bio: "",
-    email: "",
     phone: "",
     linkedin: "",
     twitter: "",
@@ -68,19 +65,6 @@ export default function UserForm() {
           </div>
 
           <div className="form-grid">
-            <div className="form-group">
-              <label>
-                What's your name? <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="e.g., Sarah Johnson"
-                required
-              />
-            </div>
 
             <div className="form-group">
               <label>What's your role?</label>
@@ -90,6 +74,17 @@ export default function UserForm() {
                 value={formData.role}
                 onChange={handleInputChange}
                 placeholder="e.g., CEO & Co-Founder"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Where are you based?</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                placeholder="e.g., San Francisco, USA"
               />
             </div>
           </div>
@@ -134,20 +129,11 @@ export default function UserForm() {
               </div>
             </div>
 
-            <div className="form-group">
-              <label>Where are you based?</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                placeholder="e.g., San Francisco, USA"
-              />
-            </div>
+           
           </div>
 
           <div className="form-group full-width">
-            <label>Tell your story</label>
+            <label>Your Bio</label>
             <textarea
               name="bio"
               value={formData.bio}
@@ -162,20 +148,6 @@ export default function UserForm() {
           <div className="social-links-section">
             <h3>Connect With Me</h3>
             <div className="social-links-grid">
-              <div className="form-group">
-                <label className="icon-label">
-                  <Mail className="input-icon" />
-                  Email <span className="required">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
 
               <div className="form-group">
                 <label className="icon-label">
@@ -232,7 +204,7 @@ export default function UserForm() {
           <div className="form-grid">
             <div className="form-group">
               <label>
-                Startup name <span className="required">*</span>
+                Startup name
               </label>
               <input
                 type="text"
@@ -240,7 +212,6 @@ export default function UserForm() {
                 value={formData.startupName}
                 onChange={handleInputChange}
                 placeholder="e.g., TechFlow AI"
-                required
               />
             </div>
 
@@ -277,9 +248,6 @@ export default function UserForm() {
         </div>
 
         <div className="form-actions">
-          <button type="button" className="btn-secondary">
-            Save as Draft
-          </button>
           <button type="submit" className="btn-primary">
             Complete Profile
           </button>
