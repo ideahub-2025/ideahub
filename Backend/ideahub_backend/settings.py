@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "djongo",  # Added Djongo to the installed apps
     'corsheaders',
     'rest_framework_simplejwt',
+    
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,8 @@ TEMPLATES = [
     },
 ]
 
+
+
+# Media files settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
