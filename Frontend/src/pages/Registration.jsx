@@ -4,7 +4,6 @@ import logo from "../assets/logo.png";
 import '../App.css';
 import axios from 'axios';
 
-
 export default function RegistPage() {
   const navigate = useNavigate();
   const goToSignin = () => {
@@ -19,7 +18,6 @@ export default function RegistPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(""); 
   const [successMessage, setSuccessMessage] = useState(""); 
-
 
   const validatePassword = (password) => {
     const check = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -55,7 +53,6 @@ export default function RegistPage() {
     }
 
     setError(""); // Clear previous errors if validation passes
-    
 
     const userData = { full_name: fullName, // Change to match the field name in Django
       username,
@@ -72,9 +69,16 @@ export default function RegistPage() {
     .then(response => {
       console.log(response.data);
       setSuccessMessage("Registration successful! You can now sign in.");
-      // Redirect to sign-in page after a successful registration
+      
+      // Redirection based on the role after registration
       setTimeout(() => {
-        navigate("/");
+        if (role === "entrepreneur") {
+          // Redirect to user-form with username, role, and email
+          navigate("/user-form", { state: { username, fullName, role, email } });
+        } else if (role === "investor") {
+          // Redirect to investors-form with username, role, and email
+          navigate("/investor-form", { state: { username, fullName, role, email } });
+        }
       }, 2000);  // Redirect after 2 seconds
     })
     .catch(error => {
@@ -83,7 +87,6 @@ export default function RegistPage() {
       const errorMessage = error.response ? error.response.data.error || "Registration failed! Please try again." : "Network error. Please try again.";
       setError(errorMessage);  // Set the error message to display
     });
-  
   };
 
   return (
