@@ -1,8 +1,16 @@
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
+import axios from "axios";
+import { Camera, Phone, Linkedin, Twitter } from "lucide-react";
+import "../App.css";
 
-import { useState, useRef } from "react"
-import { Camera, Mail, Phone, Linkedin, Twitter } from "lucide-react"
-import "../App.css"
 export default function UserForm() {
+  const { state } = useLocation(); // Get the passed state
+  const { username, fullName, role, email } = state || {}; // Destructure the state
+
+  // Use this data as needed
+  console.log(username, fullName, role, email);
+
   const [formData, setFormData] = useState({
     role: "",
     location: "",
@@ -14,40 +22,76 @@ export default function UserForm() {
     startDate: "",
     teamSize: "",
     website: "",
-  })
+  });
 
-  const [charCount, setCharCount] = useState(0)
-  const [photoPreview, setPhotoPreview] = useState(null)
-  const fileInputRef = useRef(null)
+  const [charCount, setCharCount] = useState(0);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     if (name === "bio") {
-      setCharCount(value.length)
+      setCharCount(value.length);
     }
-  }
+  };
 
   const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setPhotoPreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
+        setPhotoPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Handle form submission
-    console.log("Form submitted:", formData)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Prepare form data for submission
+    const dataToSubmit = {
+      ...formData,
+      username,
+      fullName,
+      email,
+      photo: photoPreview, // You might want to send the base64 image or a file URL
+    };
+
+    try {
+      // Make the API call to register the user
+      const response = await axios.post("http://localhost:8000/api/create_entrepreneur_profile/", dataToSubmit,{
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setSuccessMessage("Profile successfully created! Redirecting to homepage...");
+        setErrorMessage(null);
+
+        // Redirect to homepage after 3 seconds
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        throw new Error("An error occurred during registration.");
+      }
+    } catch (error) {
+      setErrorMessage("There was an issue with the registration. Please try again later.");
+      setSuccessMessage(null);
+    }
+  };
 
   return (
     <div className="userform-container">
@@ -55,6 +99,18 @@ export default function UserForm() {
         <h1>👋 Welcome! Let's Build Your Profile</h1>
         <p>Help investors get to know you and your startup better</p>
       </div>
+
+      {successMessage && (
+        <div className="success-message">
+          <p>{successMessage}</p>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="error-message">
+          <p>{errorMessage}</p>
+        </div>
+      )}
 
       <form className="userform" onSubmit={handleSubmit}>
         {/* About You Section */}
@@ -65,7 +121,6 @@ export default function UserForm() {
           </div>
 
           <div className="form-grid">
-
             <div className="form-group">
               <label>What's your role?</label>
               <input
@@ -128,8 +183,6 @@ export default function UserForm() {
                 />
               </div>
             </div>
-
-           
           </div>
 
           <div className="form-group full-width">
@@ -148,7 +201,6 @@ export default function UserForm() {
           <div className="social-links-section">
             <h3>Connect With Me</h3>
             <div className="social-links-grid">
-
               <div className="form-group">
                 <label className="icon-label">
                   <Phone className="input-icon" />
@@ -254,6 +306,5 @@ export default function UserForm() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-
