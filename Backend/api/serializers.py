@@ -15,12 +15,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     #     return user_profile
 
 class InvestorSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(required=False)  # ✅ Allows image files
+    id_document = serializers.FileField(required=False)  # ✅ Allows document files
+
     class Meta:
         model = Investor
-        fields = '__all__'
-
-        def validate_profile_picture(self, value):
-            if value and hasattr(value, 'content_type'):
-                if not value.content_type.startswith('image'):
-                    raise serializers.ValidationError("Invalid file type. Upload an image.")
-            return value
+        fields = '__all__'  # Ensure all necessary fields are included
