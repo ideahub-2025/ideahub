@@ -1,11 +1,14 @@
-"use client"
-
-import { useState, useRef } from "react"
-import { Camera, FileCheck, Building, Briefcase, DollarSign, Phone, Linkedin, Twitter } from "lucide-react"
-import Select from "react-select"
-import "../App.css"
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
+import { Camera, FileCheck, Building, Briefcase, DollarSign, Phone, Linkedin, Twitter } from "lucide-react";
+import Select from "react-select";
+import axios from "axios"; // Don't forget to install axios if you don't have it
+import "../App.css";
 
 export default function InvestorForm() {
+  const { state } = useLocation(); // Get the passed state
+  const { username, fullName, email } = state || {}; // Destructure the state
+
   const [formData, setFormData] = useState({
     role: "",
     location: "",
@@ -20,60 +23,59 @@ export default function InvestorForm() {
     minInvestment: "",
     maxInvestment: "",
     sectors: "",
-  })
+  });
 
-  const [charCount, setCharCount] = useState(0)
-  const [photoPreview, setPhotoPreview] = useState(null)
-  const [idDocumentPreview, setIdDocumentPreview] = useState(null)
-  const fileInputRef = useRef(null)
-  const idDocumentRef = useRef(null)
+  const [charCount, setCharCount] = useState(0);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [idDocumentPreview, setIdDocumentPreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const idDocumentRef = useRef(null);
+  
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     if (name === "bio") {
-      setCharCount(value.length)
+      setCharCount(value.length);
     }
-  }
+  };
 
   const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setPhotoPreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
+        setPhotoPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleIdDocumentUpload = (e) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setIdDocumentPreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
+        setIdDocumentPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    // Validate that ID document is provided
-    if (!idDocumentPreview) {
-      alert("Proof of identity document is required!")
-      return
-    }
-    
-    // Handle form submission
-    console.log("Form submitted:", formData)
-  }
+  const handleSectorChange = (selectedOption) => {
+    setFormData((prev) => ({
+      ...prev,
+      sectors: selectedOption ? selectedOption.map((option) => option.value).join(", ") : "",
+    }));
+  };
 
   const sectorsOptions = [
     { value: "AI", label: "AI" },
@@ -89,11 +91,48 @@ export default function InvestorForm() {
     { value: "Other", label: "Other" },
   ];
 
-  const handleSectorChange = (selectedOption) => {
-    setFormData((prev) => ({
-      ...prev,
-      sectors: selectedOption ? selectedOption.map((option) => option.value).join(", ") : "",
-    }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate that ID document is provided
+    if (!idDocumentPreview) {
+      alert("Proof of identity document is required!");
+      return;
+    }
+
+    // Prepare form data for submission
+    const dataToSubmit = {
+      ...formData,
+      username,
+      full_name:fullName,
+      email,
+      profile_picture: photoPreview, // Send base64 image or file URL
+      id_document: idDocumentPreview, // Send base64 document
+    };
+
+    try {
+      // Make the API call to submit the form
+      const response = await axios.post("http://localhost:8000/api/investors/", dataToSubmit, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setSuccessMessage("Profile successfully created! Redirecting...");
+        setErrorMessage(null);
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          navigate("/"); // Adjust the URL as needed
+        }, 3000);
+      } else {
+        throw new Error("An error occurred while submitting the form.");
+      }
+    } catch (error) {
+      setErrorMessage("There was an issue with the submission. Please try again later.");
+      setSuccessMessage(null);
+    }
   };
 
   return (
