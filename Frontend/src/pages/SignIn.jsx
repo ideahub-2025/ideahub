@@ -31,7 +31,7 @@ const goToReset = () => {
     const userData = { username, password };
 
     try {
-      const response = await axios.post('http://localhost:8000/api/signin/', userData, {
+      const response = await axios.post('http://localhost:8000/api/sign_in/', userData, {
         headers: {
           'Content-Type': 'application/json',
         },

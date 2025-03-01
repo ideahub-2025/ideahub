@@ -72,3 +72,30 @@ class Entrepreneur(models.Model):
 
     class Meta:
         permissions = []
+
+
+class Investor(models.Model):
+    full_name = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(max_length=254, unique=True)
+    role = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    bio = models.TextField(null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    linkedin = models.URLField(max_length=255, null=True, blank=True)
+    twitter = models.URLField(max_length=255, null=True, blank=True)
+    firm_name = models.CharField(max_length=255, null=True, blank=True)
+    investment_stage = models.CharField(max_length=255, null=True, blank=True)
+    portfolio_size = models.IntegerField(null=True, blank=True)
+    website = models.URLField(max_length=255, null=True, blank=True)
+    min_investment = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    max_investment = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    sectors = models.TextField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='investor_profiles/', null=True, blank=True)
+    id_document = models.FileField(upload_to='documents/', null=True, blank=True)
+
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        permissions = []
