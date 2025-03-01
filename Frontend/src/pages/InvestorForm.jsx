@@ -10,7 +10,10 @@ export default function InvestorForm() {
   const { username, fullName, email } = state || {}; // Destructure the state
 
   const [formData, setFormData] = useState({
+    full_name:fullName|| "",
     role: "",
+    username: username|| "",
+    email:email|| "",
     location: "",
     bio: "",
     phone: "",
@@ -23,6 +26,8 @@ export default function InvestorForm() {
     minInvestment: "",
     maxInvestment: "",
     sectors: "",
+    profile_picture: null, // Store File object here
+    id_document: null, // Store File object here
   });
 
   const [charCount, setCharCount] = useState(0);
@@ -51,9 +56,14 @@ export default function InvestorForm() {
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        profile_picture: file, // Store File object
+      }));
+
       const reader = new FileReader();
       reader.onload = (e) => {
-        setPhotoPreview(e.target.result);
+        setPhotoPreview(e.target.result); // Keep preview for UI
       };
       reader.readAsDataURL(file);
     }
@@ -62,9 +72,14 @@ export default function InvestorForm() {
   const handleIdDocumentUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        id_document: file, // Store File object
+      }));
+
       const reader = new FileReader();
       reader.onload = (e) => {
-        setIdDocumentPreview(e.target.result);
+        setIdDocumentPreview(e.target.result); // Keep preview for UI
       };
       reader.readAsDataURL(file);
     }
@@ -95,37 +110,36 @@ export default function InvestorForm() {
     e.preventDefault();
 
     // Validate that ID document is provided
-    if (!idDocumentPreview) {
+    if (!formData.id_document) {
       alert("Proof of identity document is required!");
       return;
     }
 
-    // Prepare form data for submission
-    const dataToSubmit = {
-      ...formData,
-      username,
-      full_name:fullName,
-      email,
-      profile_picture: photoPreview, // Send base64 image or file URL
-      id_document: idDocumentPreview, // Send base64 document
-    };
-
     try {
-      // Make the API call to submit the form
-      const response = await axios.post("http://localhost:8000/api/investors/", dataToSubmit, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const formDataToSubmit = new FormData();
+
+      // ✅ Append File objects
+      if (formData.profile_picture instanceof File) {
+        formDataToSubmit.append("profile_picture", formData.profile_picture);
+      }
+      if (formData.id_document instanceof File) {
+        formDataToSubmit.append("id_document", formData.id_document);
+      }
+
+      // ✅ Append other form fields
+      Object.keys(formData).forEach((key) => {
+        if (key !== "profile_picture" && key !== "id_document") {
+          formDataToSubmit.append(key, formData[key]);
+        }
       });
 
-      if (response.status === 200 || response.status === 201) {
-        setSuccessMessage("Profile successfully created! Redirecting...");
-        setErrorMessage(null);
+      // ✅ Submit data via Axios
+      const response = await axios.post("http://localhost:8000/api/investors/", formDataToSubmit);
 
-        // Redirect after a short delay
-        setTimeout(() => {
-          navigate("/"); // Adjust the URL as needed
-        }, 3000);
+      if (response.status === 200 || response.status === 201) {
+        setSuccessMessage("Profile successfully created!!");
+        setErrorMessage(null);
+        setTimeout(() => navigate("/"), 3000);
       } else {
         throw new Error("An error occurred while submitting the form.");
       }
@@ -317,103 +331,103 @@ export default function InvestorForm() {
 
           <div className="form-grid">
             <div className="form-group">
-              <label className="required-field">Firm Name</label>
+              <label className="required-field">Investment Firm Name</label>
               <input
                 type="text"
                 name="firmName"
                 value={formData.firmName}
                 onChange={handleInputChange}
-                placeholder="e.g., Sequoia Capital, or Independent Angel"
+                placeholder="e.g., XYZ Ventures"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label className="required-field">Website</label>
+              <label className="required-field">Investment Stage Focus</label>
+              <input
+                type="text"
+                name="investmentStage"
+                value={formData.investmentStage}
+                onChange={handleInputChange}
+                placeholder="e.g., Seed, Series A"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Portfolio Size</label>
+              <input
+                type="text"
+                name="portfolioSize"
+                value={formData.portfolioSize}
+                onChange={handleInputChange}
+                placeholder="e.g., $10M"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Website</label>
               <input
                 type="url"
                 name="website"
                 value={formData.website}
                 onChange={handleInputChange}
-                placeholder="e.g., https://yourfirm.com"
-                required
+                placeholder="http://www.yourfirm.com"
               />
             </div>
           </div>
 
           <div className="form-grid">
             <div className="form-group">
-              <label>Investment Stage Focus</label>
-              <select 
-                name="investmentStage"
-                value={formData.investmentStage}
-                onChange={handleInputChange}
-              >
-                <option value="">Select investment stage...</option>
-                <option value="pre-seed">Pre-seed</option>
-                <option value="seed">Seed</option>
-                <option value="series-a">Series A</option>
-                <option value="series-b">Series B</option>
-                <option value="growth">Growth</option>
-                <option value="all">All Stages</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Number of Investments</label>
-              <input
-                type="number"
-                name="portfolioSize"
-                value={formData.portfolioSize}
-                onChange={handleInputChange}
-                placeholder="e.g., 15"
-                min="0"
-              />
-            </div>
-          </div>
-
-          <div className="form-grid">
-            <div className="form-group">
-              <label>Min Investment Amount</label>
+              <label>Min Investment</label>
               <input
                 type="text"
                 name="minInvestment"
                 value={formData.minInvestment}
                 onChange={handleInputChange}
-                placeholder="e.g., $25,000"
+                placeholder="$10,000"
               />
             </div>
 
             <div className="form-group">
-              <label>Max Investment Amount</label>
+              <label>Max Investment</label>
               <input
                 type="text"
                 name="maxInvestment"
                 value={formData.maxInvestment}
                 onChange={handleInputChange}
-                placeholder="e.g., $250,000"
+                placeholder="$500,000"
               />
             </div>
           </div>
-
-          <div className="form-group full-width">
-            <label>Investment Sectors</label>
-            <Select
-              isMulti
-              options={sectorsOptions}
-              onChange={handleSectorChange}
-              value={formData.sectors.split(", ").map((sector) => ({ value: sector, label: sector }))}
-              placeholder="Select sectors"
-            />
-          </div>
         </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-primary">
-            Verify & Complete Profile
-          </button>
+        {/* Investment Interests */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>📊 Investment Interests</h2>
+            <p>Let us know your preferred sectors</p>
+          </div>
+
+          <Select
+            options={sectorsOptions}
+            isMulti
+            name="sectors"
+            onChange={handleSectorChange}
+            className="select-dropdown"
+            value={formData.sectors ? sectorsOptions.filter((option) => formData.sectors.includes(option.value)) : []}
+          />
+        </div>
+
+        <div className="form-submit">
+          <button type="submit" className="submit-btn">Submit</button>
         </div>
       </form>
+
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
     </div>
-  )
+  );
 }
