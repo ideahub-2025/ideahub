@@ -41,7 +41,7 @@ export default function NewPassword() {
     // Make API call to reset the password
     try {
       const response = await fetch(
-        `http://localhost:8000/api/reset-password/${uidb64}/${token}/`,
+        `http://localhost:8000/api/reset_password/${uidb64}/${token}/`,
         {
           method: "POST",
           headers: {
