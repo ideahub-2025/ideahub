@@ -5,7 +5,7 @@ import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
 import UserForm from "./pages/UserForm";
 import InvestorForm from "./pages/InvestorForm";
-
+import EntHome from "./pages/EntreprenuerHome";
 
 export default function AppRoutes() {
   return (
@@ -17,6 +17,7 @@ export default function AppRoutes() {
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/user-form" element={<UserForm />} />
         <Route path="/investor-form" element={<InvestorForm />} />
+        <Route path="/ent-home" element={<EntHome />} />
       </Routes>
     </Router>
   );
