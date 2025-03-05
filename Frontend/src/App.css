@@ -714,3 +714,200 @@ select:focus {
   margin-left: 5px;
   font-weight: extra-bold;
 }
+
+/* Admin Panel Layout */
+.admin-panel {
+  display: flex;
+  height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #333;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 15px;
+  right: -45px;
+  background: #444;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sidebar-toggle:hover {
+  background: #555;
+}
+
+/* Sidebar Buttons */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 10px 0;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 10px;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar button:hover {
+  background: #FDBB1A; /* Yellow color for hover */
+}
+
+/* Content Section */
+.content {
+  flex-grow: 1;
+  margin-left: 270px;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.content.full-width {
+  margin-left: 0;
+}
+
+/* Dark Mode */
+.dark-theme {
+  background-color: #222;
+  color: white;
+}
+
+/* Table Styling */
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.responsive-table th,
+.responsive-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.responsive-table th {
+  background-color: #333;
+  color: white;
+}
+
+.responsive-table td {
+  background-color: #fff;
+}
+
+.responsive-table tr:hover {
+  background-color: #f2f2f2;
+}
+
+/* Button Styling */
+button {
+  background-color: #FDBB1A; /* Yellow */
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background-color: #eab308; /* Darker Yellow on hover */
+}
+
+/* Search Input */
+.search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Table Button Styling */
+.table-btn {
+  background-color: #FDBB1A; /* Yellow */
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.table-btn:hover {
+  background-color: #eab308;
+}
+
+/* Form Section */
+.form-section {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border-left: 4px solid #FDBB1A; /* Yellow accent */
+}
+
+.section-header h2 {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.section-header p {
+  color: #777;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+/* Responsive Design for Tables and Forms */
+@media (max-width: 768px) {
+  .responsive-table th,
+  .responsive-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
