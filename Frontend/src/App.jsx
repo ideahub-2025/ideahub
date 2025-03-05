@@ -10,6 +10,7 @@ import UsersPage from "./pages/UsersPage";
 import InvestorsPage from "./pages/InvestorsPage";
 import PostsPage from "./pages/PostsPage";
 import SettingsPage from "./pages/SettingsPage";
+import AdminLogin from "./pages/AdminLogin";
 
 
 export default function AppRoutes() {
@@ -27,6 +28,7 @@ export default function AppRoutes() {
         <Route path="/admin/investors" element={<InvestorsPage />} />
         <Route path="/admin/Posts" element={<PostsPage />} />
         <Route path="/admin/settings" element={<SettingsPage />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
       </Routes>
     </Router>
   );
