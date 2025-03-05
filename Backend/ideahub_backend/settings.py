@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "djongo",  # Added Djongo to the installed apps
     'corsheaders',
     'rest_framework_simplejwt',
+     'rest_framework.authtoken',
+    
 ]
 
 MIDDLEWARE = [
@@ -81,6 +83,8 @@ AUTHENTICATION_BACKENDS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
@@ -113,13 +117,17 @@ MIGRATION_MODULES = {
 
 # settings.py
 # Email settings in settings.py
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "ideahub_backend.custom_email_backend.CustomEmailBackend"
+
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ideahub2025@gmail.com'  # Your Gmail address
 EMAIL_HOST_PASSWORD = 'fjau dyhe naos agfb'  # Your Gmail password or App Password
 HOST_URL = "http://localhost:5173"  # Adjust the URL as needed
+EMAIL_USE_SSL = False
+
 
 TEMPLATES = [
     {
@@ -139,3 +147,8 @@ TEMPLATES = [
     },
 ]
 
+
+
+# Media files settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
