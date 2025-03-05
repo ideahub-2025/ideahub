@@ -1,131 +1,155 @@
 import React, { useState } from "react";
-import "../App.css";
+import UsersPage from "./UsersPage";
+import InvestorsPage from "./InvestorsPage";
+import PostsPage from "./PostsPage";
+import SettingsPage from "./SettingsPage";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState([
-    { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
+    { id: 1, name: "John Doe", email: "john@example.com", status: "Active", joinDate: "2022-01-01" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "Inactive", joinDate: "2021-05-15" },
+    { id: 3, name: "Alice Brown", email: "alice@example.com", status: "Active", joinDate: "2023-02-12" },
   ]);
 
   const [investors, setInvestors] = useState([
-    { id: 1, name: "Investor One", amount: 5000, firm: "ABC Corp", status: "Active" },
-    { id: 2, name: "Investor Two", amount: 10000, firm: "XYZ Ltd", status: "Pending" },
+    { id: 1, name: "Investor One", amount: 5000, firm: "ABC Corp", status: "Verified", email: "investor1@abc.com", joinDate: "2021-07-01" },
+    { id: 2, name: "Investor Two", amount: 10000, firm: "XYZ Ltd", status: "Unverified", email: "investor2@xyz.com", joinDate: "2020-09-23" },
+    { id: 3, name: "Investor Three", amount: 15000, firm: "DEF Investments", status: "Blocked", email: "investor3@def.com", joinDate: "2022-03-10" },
   ]);
 
-  const [comments, setComments] = useState([
-    { id: 1, text: "Great platform!" },
-    { id: 2, text: "Needs improvements." },
+  const [posts, setPosts] = useState([
+    { id: 1, userId: 1, text: "Great platform!", link: "http://postlink1.com", isActive: true, date: "2023-03-01" },
+    { id: 2, userId: 2, text: "Needs improvements.", link: "http://postlink2.com", isActive: false, date: "2023-03-02" },
   ]);
 
   const [page, setPage] = useState("users");
-  const [darkMode, setDarkMode] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingUser, setEditingUser] = useState(null);
+  const [userChanges, setUserChanges] = useState({});
+  const [editingInvestor, setEditingInvestor] = useState(null);
+  const [investorChanges, setInvestorChanges] = useState({});
 
-  const handleDeleteUser = (id) => setUsers(users.filter((user) => user.id !== id));
-  const handleDeleteInvestor = (id) => setInvestors(investors.filter((investor) => investor.id !== id));
-  const handleDeleteComment = (id) => setComments(comments.filter((comment) => comment.id !== id));
-
-  const handleLogout = () => {
-    alert("Logging out... Redirecting to login page.");
+  // Handle User Edit
+  const handleEditUser = (id) => {
+    const user = users.find(u => u.id === id);
+    setUserChanges(user);
+    setEditingUser(id);
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode");
+  const handleSaveUser = () => {
+    setUsers(users.map(user => user.id === editingUser ? { ...user, ...userChanges } : user));
+    setEditingUser(null);
+    setUserChanges({});
+  };
+
+  const handleToggleStatus = (id) => {
+    setUsers(users.map(user => user.id === id ? { ...user, status: user.status === "Active" ? "Inactive" : "Active" } : user));
+  };
+
+  const handleDeleteUser = (id) => {
+    setUsers(users.filter(user => user.id !== id));
+  };
+
+  // Handle Investor Edit
+  const handleEditInvestor = (id) => {
+    const investor = investors.find(i => i.id === id);
+    setInvestorChanges(investor);
+    setEditingInvestor(id);
+  };
+
+  const handleSaveInvestor = () => {
+    setInvestors(investors.map(investor => investor.id === editingInvestor ? { ...investor, ...investorChanges } : investor));
+    setEditingInvestor(null);
+    setInvestorChanges({});
+  };
+
+  const handleToggleInvestorStatus = (id) => {
+    setInvestors(investors.map(investor => {
+      if (investor.id === id) {
+        const newStatus = investor.status === "Verified"
+          ? "Unverified"
+          : investor.status === "Unverified"
+          ? "Blocked"
+          : "Verified";
+        return { ...investor, status: newStatus };
+      }
+      return investor;
+    }));
+  };
+
+  const handleDeleteInvestor = (id) => {
+    setInvestors(investors.filter(investor => investor.id !== id));
+  };
+
+  const handleTogglePostStatus = (id) => {
+    setPosts(posts.map(post => post.id === id ? { ...post, isActive: !post.isActive } : post));
+  };
+
+  const handleDeletePost = (id) => {
+    setPosts(posts.filter(post => post.id !== id));
+  };
+
+  const handleLogout = () => {
+    const isConfirmed = window.confirm("Are you sure you want to log out?");
+    if (isConfirmed) {
+      console.log("Logging out...");
+    }
   };
 
   return (
-    <div className={`admin-panel ${darkMode ? "dark-theme" : ""}`}>
-      <div className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
-        <button className="sidebar-toggle fixed-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? "❌" : "☰"}
-        </button>
+    <div className="admin-panel">
+      <div className="sidebar">
         <h2>Admin Panel</h2>
         <ul>
           <li><button onClick={() => setPage("users")}>Users</button></li>
           <li><button onClick={() => setPage("investors")}>Investors</button></li>
-          <li><button onClick={() => setPage("comments")}>Comments</button></li>
+          <li><button onClick={() => setPage("posts")}>Posts</button></li>
           <li><button onClick={() => setPage("settings")}>Settings</button></li>
         </ul>
       </div>
 
-      <div className={`content ${sidebarOpen ? "shifted" : "full-width"}`}>
+      <div className="content">
         {page === "users" && (
-          <div>
-            <h2>User Management</h2>
-            <table className="responsive-table">
-              <thead>
-                <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                    <td>
-                      <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <UsersPage
+            users={users}
+            searchTerm={searchTerm}
+            onSearchChange={(e) => setSearchTerm(e.target.value)}
+            onEditUser={handleEditUser}
+            onSaveUser={handleSaveUser}
+            onToggleStatus={handleToggleStatus}
+            onDeleteUser={handleDeleteUser}
+            userChanges={userChanges}
+            setUserChanges={setUserChanges}
+            editingUser={editingUser}
+          />
         )}
 
         {page === "investors" && (
-          <div>
-            <h2>Investor Management</h2>
-            <table className="responsive-table">
-              <thead>
-                <tr><th>Name</th><th>Investment</th><th>Firm</th><th>Status</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                {investors.map((investor) => (
-                  <tr key={investor.id}>
-                    <td>{investor.name}</td>
-                    <td>${investor.amount}</td>
-                    <td>{investor.firm}</td>
-                    <td>{investor.status}</td>
-                    <td>
-                      <button onClick={() => handleDeleteInvestor(investor.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <InvestorsPage
+            investors={investors}
+            onToggleInvestorStatus={handleToggleInvestorStatus}
+            onDeleteInvestor={handleDeleteInvestor}
+            onEditInvestor={handleEditInvestor}
+            onSaveInvestor={handleSaveInvestor}
+            investorChanges={investorChanges}
+            setInvestorChanges={setInvestorChanges}
+            editingInvestor={editingInvestor}
+          />
         )}
 
-        {page === "comments" && (
-          <div>
-            <h2>Comments Management</h2>
-            <table className="responsive-table">
-              <thead>
-                <tr><th>Comment</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                {comments.map((comment) => (
-                  <tr key={comment.id}>
-                    <td>{comment.text}</td>
-                    <td>
-                      <button onClick={() => handleDeleteComment(comment.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {page === "posts" && (
+          <PostsPage
+            posts={posts}
+            users={users}
+            onTogglePostStatus={handleTogglePostStatus}
+            onDeletePost={handleDeletePost}
+            searchTerm={searchTerm}
+            onSearchChange={(e) => setSearchTerm(e.target.value)}
+          />
         )}
 
         {page === "settings" && (
-          <div>
-            <h2>Settings</h2>
-            <button onClick={handleLogout} className="logout-btn">Logout</button>
-            <button onClick={toggleDarkMode} className="dark-mode-btn">
-              {darkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
-            </button>
-          </div>
+          <SettingsPage onLogout={handleLogout} />
         )}
       </div>
     </div>
