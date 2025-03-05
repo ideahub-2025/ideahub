@@ -8,7 +8,7 @@ import InvestorForm from "./pages/InvestorForm";
 import AdminPanel from "./pages/AdminPanel";
 import UsersPage from "./pages/UsersPage";
 import InvestorsPage from "./pages/InvestorsPage";
-import CommentsPage from "./pages/CommentsPage";
+import PostsPage from "./pages/PostsPage";
 import SettingsPage from "./pages/SettingsPage";
 
 
@@ -17,7 +17,7 @@ export default function AppRoutes() {
     <Router>
       <Routes>
         <Route path="/" element={<AuthPage />} />
-        <Route path="/register" element={<RegistPage />} />
+        <Route path="/register" element={<RegistPage />} /> 
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/user-form" element={<UserForm />} />
@@ -25,7 +25,7 @@ export default function AppRoutes() {
         <Route path="/admin-panel" element ={<AdminPanel/>}></Route>
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/investors" element={<InvestorsPage />} />
-        <Route path="/admin/comments" element={<CommentsPage />} />
+        <Route path="/admin/Posts" element={<PostsPage />} />
         <Route path="/admin/settings" element={<SettingsPage />} />
       </Routes>
     </Router>
