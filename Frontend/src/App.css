@@ -6,9 +6,7 @@
 
 
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 0;
   background-color: #f3f4f6; 
 }
 
@@ -305,11 +303,14 @@ body {
 }
 
 .input-group {
+  display: flex;
+  justify-content: center;
   align-items: center;
   width: 100%;
 }
 
 .input-field {
+
   width: 300px;
   padding: 3px;
   font-family: 'Arima', sans-serif;
@@ -714,3 +715,876 @@ select:focus {
   margin-left: 5px;
   font-weight: extra-bold;
 }
+
+
+/*Dashboard Page*/
+
+.EntContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto auto;
+  padding: 0 20px;
+}
+
+/* Header/Navigation */
+.headerSection {
+  background-color: #fdbb1a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navigationBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+  padding: 0 20px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 8px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+
+.logoText {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+.searchWrapper {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 20px;
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .searchWrapper {
+    display: block;
+  }
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border-radius: 20px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+}
+
+.searchIconWrapper {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 15px;
+  cursor: pointer;
+  position: relative;
+}
+
+.iconButton:hover {
+  opacity: 0.8;
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+  border: 2px solid white;
+  overflow: hidden;
+}
+
+.userAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Hero Section */
+.heroSection {
+  background: linear-gradient(to bottom, #fdbb1a, #ffd166);
+  padding: 60px 20px;
+  color: white;
+}
+
+.heroWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .heroWrapper {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.heroContent {
+  margin-bottom: 30px;
+}
+
+@media (min-width: 768px) {
+  .heroContent {
+    width: 50%;
+    margin-bottom: 0;
+  }
+
+  .heroImageContainer {
+    width: 45%;
+  }
+}
+
+.heroTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+@media (min-width: 768px) {
+  .heroTitle {
+    font-size: 48px;
+  }
+}
+
+.heroSubtitle {
+  font-size: 18px;
+  margin-bottom: 25px;
+  opacity: 0.9;
+}
+
+.primaryButton {
+  background-color: white;
+  color: #fdbb1a;
+  border: none;
+  padding: 12px 24px;
+  font-family: "Gentium Book Basic", serif;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.primaryButton:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.primaryButton svg {
+  margin-right: 8px;
+}
+
+.heroImageContainer img {
+  max-width: 50%;
+  height: 50%;
+  margin-left: 200px;
+  margin-top: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Dashboard */
+.dashboardSection {
+  padding: 40px 20px;
+}
+
+.dashboardLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .dashboardLayout {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+/* Sidebar */
+.card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.cardHeader {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.cardTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cardContent {
+  padding: 20px;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profilePicture {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  overflow: hidden;
+}
+
+.profilePicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userName {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.userRole {
+  font-size: 14px;
+  color: #888;
+}
+
+.statsSection {
+  margin-top: 20px;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.statName {
+  font-size: 14px;
+  color: #888;
+}
+
+.statValue {
+  font-weight: 600;
+}
+
+.secondaryButton {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.secondaryButton:hover {
+  background-color: #f9f9f9;
+}
+
+.eventItem {
+  border-left: 4px solid #fdbb1a;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+}
+
+.eventName {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.eventDetails {
+  font-size: 12px;
+  color: #888;
+}
+
+.textLink {
+  background: none;
+  border: none;
+  color: #fdbb1a;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.textLink:hover {
+  text-decoration: underline;
+}
+
+/* Tabs */
+.tabsContainer {
+  margin-bottom: 20px;
+}
+
+.tabsList {
+  display: flex;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  background: none;
+  border: none;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tabButtonActive {
+  background-color: white;
+  font-weight: 600;
+}
+
+.tabPanel {
+  display: none;
+}
+
+.tabPanelActive {
+  display: block;
+}
+
+/* Cards */
+.ideaCard {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.ideaCard:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ideaCardHeader {
+  padding: 20px 20px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ideaTitleSection {
+  flex: 1;
+}
+
+.ideaTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+}
+
+.authorPicture {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+  overflow: hidden;
+}
+
+.authorPicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.authorName {
+  font-size: 12px;
+  color: #888;
+}
+
+.categoryTag {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #fff8e6;
+  border: 1px solid #ffeeba;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #fdbb1a;
+}
+
+.ideaCardContent {
+  padding: 0 20px 20px;
+}
+
+.ideaDescription {
+  font-size: 14px;
+  color: #555;
+}
+
+.ideaCardFooter {
+  padding: 15px 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.engagementActions {
+  display: flex;
+}
+
+.engagementButton {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: #888;
+  margin-right: 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.engagementButton:hover {
+  color: #fdbb1a;
+}
+
+.engagementButton svg {
+  margin-right: 5px;
+}
+
+.saveButton {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.saveButton:hover {
+  color: #fdbb1a;
+}
+
+.saveButton svg {
+  margin-right: 5px;
+}
+
+.loadMoreButton {
+  width: 100%;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.loadMoreButton:hover {
+  background-color: #f9f9f9;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.emptyStateIcon {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.emptyStateTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.emptyStateMessage {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.accentButton {
+  background-color: #fdbb1a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-family: "Gentium Book Basic", serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accentButton:hover {
+  background-color: #eab308;
+}
+
+/* Investor Spotlight */
+.spotlightSection {
+  background-color: #f9f9f9;
+  padding: 40px 20px;
+  margin-top: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sectionTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.investorCard {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.investorCard:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.investorHeader {
+  padding: 20px 20px 10px;
+}
+
+.investorProfile {
+  display: flex;
+  align-items: center;
+}
+
+.investorPicture {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+.investorPicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.investorInfo {
+  flex: 1;
+}
+
+.investorName {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.investorSpecialty {
+  font-size: 12px;
+  color: #888;
+}
+
+.investorContent {
+  padding: 0 20px 20px;
+}
+
+.investorBio {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #555;
+}
+
+.investorFooter {
+  padding: 15px 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.viewProfileButton {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.viewProfileButton:hover {
+  background-color: #f9f9f9;
+}
+
+/* Footer */
+.footerSection {
+  background-color: #333;
+  color: white;
+  padding: 40px 20px;
+  margin-top: 40px;
+}
+
+.footerLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+@media (min-width: 768px) {
+  .footerLayout {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.footerColumn h3 {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.footerColumn p {
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+.footerLinks {
+  list-style: none;
+}
+
+.footerLinks li {
+  margin-bottom: 10px;
+}
+
+.footerLinks a {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.footerLinks a:hover {
+  color: #fdbb1a;
+}
+
+.footerCopyright {
+  text-align: center;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid #444;
+  font-size: 12px;
+  color: #777;
+}
+
+/* Dialog/Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContainer {
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modalTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.modalDescription {
+  font-size: 14px;
+  color: #888;
+}
+
+.modalContent {
+  padding: 20px;
+}
+
+.formLayout {
+  display: grid;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.formInput {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+}
+
+.formSelect {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  background-color: white;
+}
+
+.formTextarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  min-height: 150px;
+  resize: vertical;
+}
+
+.modalFooter {
+  padding: 15px 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancelButton {
+  background: none;
+  border: none;
+  color: #888;
+  margin-right: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submitButton {
+  background-color: #fdbb1a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-family: "Gentium Book Basic", serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #eab308;
+}
+
