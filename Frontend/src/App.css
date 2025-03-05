@@ -714,3 +714,322 @@ select:focus {
   margin-left: 5px;
   font-weight: extra-bold;
 }
+
+/* Admin Panel Layout */
+.admin-panel {
+  display: flex;
+  height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #333;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 15px;
+  right: -45px;
+  background: #444;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sidebar-toggle:hover {
+  background: #555;
+}
+
+/* Sidebar Buttons */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 10px 0;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 10px;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar button:hover {
+  background: #FDBB1A; /* Yellow color for hover */
+}
+
+/* Content Section */
+.content {
+  flex-grow: 1;
+  margin-left: 270px;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.content.full-width {
+  margin-left: 0;
+}
+
+/* Dark Mode */
+.dark-theme {
+  background-color: #222;
+  color: white;
+}
+
+/* Table Styling */
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.responsive-table th,
+.responsive-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.responsive-table th {
+  background-color: #333;
+  color: white;
+}
+
+.responsive-table td {
+  background-color: #fff;
+}
+
+.responsive-table tr:hover {
+  background-color: #f2f2f2;
+}
+
+/* Button Styling */
+button {
+  background-color: #FDBB1A; /* Yellow */
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background-color: #eab308; /* Darker Yellow on hover */
+}
+
+/* Search Input */
+.search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Table Button Styling */
+.table-btn {
+  background-color: #FDBB1A; /* Yellow */
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.table-btn:hover {
+  background-color: #eab308;
+}
+
+/* Form Section */
+.form-section {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border-left: 4px solid #FDBB1A; /* Yellow accent */
+}
+
+.section-header h2 {
+  font-family: 'Gentium Book Basic', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.section-header p {
+  color: #777;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+/* Responsive Design for Tables and Forms */
+@media (max-width: 768px) {
+  .responsive-table th,
+  .responsive-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* admin login page */
+.my-admin-login-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Left side: Branding / Info */
+.my-admin-info-section {
+  width: 50%;
+  background-color: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.my-admin-branding {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.my-admin-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.my-admin-branding h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-admin-branding p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.my-admin-signup-btn {
+  background-color: #fdb833; /* Gold-ish color */
+  color: #000;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.my-admin-signup-btn:hover {
+  background-color: #e2a929; /* Slightly darker on hover */
+}
+
+/* Right side: Form */
+.my-admin-form-section {
+  width: 50%;
+  background-color: #333; /* Dark background */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  color: #fff;
+}
+
+.my-admin-form-section h2 {
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.my-admin-form {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.my-admin-input-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-admin-input-group label {
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+
+.my-admin-input-group input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Forgot password link */
+.my-admin-forgot-link {
+  display: inline-block;
+  margin: 0.5rem 0 1.5rem;
+  color: #aaa;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.my-admin-forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Sign In button */
+.my-admin-signin-btn {
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.my-admin-signin-btn:hover {
+  background-color: #444;
+}

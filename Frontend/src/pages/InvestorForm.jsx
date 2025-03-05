@@ -1,13 +1,19 @@
-"use client"
-
-import { useState, useRef } from "react"
-import { Camera, FileCheck, Building, Briefcase, DollarSign, Phone, Linkedin, Twitter } from "lucide-react"
-import Select from "react-select"
-import "../App.css"
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
+import { Camera, FileCheck, Building, Briefcase, DollarSign, Phone, Linkedin, Twitter } from "lucide-react";
+import Select from "react-select";
+import axios from "axios"; // Don't forget to install axios if you don't have it
+import "../App.css";
 
 export default function InvestorForm() {
+  const { state } = useLocation(); // Get the passed state
+  const { username, fullName, email } = state || {}; // Destructure the state
+
   const [formData, setFormData] = useState({
+    full_name:fullName|| "",
     role: "",
+    username: username|| "",
+    email:email|| "",
     location: "",
     bio: "",
     phone: "",
@@ -20,60 +26,71 @@ export default function InvestorForm() {
     minInvestment: "",
     maxInvestment: "",
     sectors: "",
-  })
+    profile_picture: null, // Store File object here
+    id_document: null, // Store File object here
+  });
 
-  const [charCount, setCharCount] = useState(0)
-  const [photoPreview, setPhotoPreview] = useState(null)
-  const [idDocumentPreview, setIdDocumentPreview] = useState(null)
-  const fileInputRef = useRef(null)
-  const idDocumentRef = useRef(null)
+  const [charCount, setCharCount] = useState(0);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [idDocumentPreview, setIdDocumentPreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const idDocumentRef = useRef(null);
+  
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     if (name === "bio") {
-      setCharCount(value.length)
+      setCharCount(value.length);
     }
-  }
+  };
 
   const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      setFormData((prev) => ({
+        ...prev,
+        profile_picture: file, // Store File object
+      }));
+
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setPhotoPreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
+        setPhotoPreview(e.target.result); // Keep preview for UI
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleIdDocumentUpload = (e) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setIdDocumentPreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
+      setFormData((prev) => ({
+        ...prev,
+        id_document: file, // Store File object
+      }));
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    // Validate that ID document is provided
-    if (!idDocumentPreview) {
-      alert("Proof of identity document is required!")
-      return
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setIdDocumentPreview(e.target.result); // Keep preview for UI
+      };
+      reader.readAsDataURL(file);
     }
-    
-    // Handle form submission
-    console.log("Form submitted:", formData)
-  }
+  };
+
+  const handleSectorChange = (selectedOption) => {
+    setFormData((prev) => ({
+      ...prev,
+      sectors: selectedOption ? selectedOption.map((option) => option.value).join(", ") : "",
+    }));
+  };
 
   const sectorsOptions = [
     { value: "AI", label: "AI" },
@@ -89,11 +106,47 @@ export default function InvestorForm() {
     { value: "Other", label: "Other" },
   ];
 
-  const handleSectorChange = (selectedOption) => {
-    setFormData((prev) => ({
-      ...prev,
-      sectors: selectedOption ? selectedOption.map((option) => option.value).join(", ") : "",
-    }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate that ID document is provided
+    if (!formData.id_document) {
+      alert("Proof of identity document is required!");
+      return;
+    }
+
+    try {
+      const formDataToSubmit = new FormData();
+
+      // ✅ Append File objects
+      if (formData.profile_picture instanceof File) {
+        formDataToSubmit.append("profile_picture", formData.profile_picture);
+      }
+      if (formData.id_document instanceof File) {
+        formDataToSubmit.append("id_document", formData.id_document);
+      }
+
+      // ✅ Append other form fields
+      Object.keys(formData).forEach((key) => {
+        if (key !== "profile_picture" && key !== "id_document") {
+          formDataToSubmit.append(key, formData[key]);
+        }
+      });
+
+      // ✅ Submit data via Axios
+      const response = await axios.post("http://localhost:8000/api/investors/", formDataToSubmit);
+
+      if (response.status === 200 || response.status === 201) {
+        setSuccessMessage("Profile successfully created!!");
+        setErrorMessage(null);
+        setTimeout(() => navigate("/"), 3000);
+      } else {
+        throw new Error("An error occurred while submitting the form.");
+      }
+    } catch (error) {
+      setErrorMessage("There was an issue with the submission. Please try again later.");
+      setSuccessMessage(null);
+    }
   };
 
   return (
@@ -278,103 +331,103 @@ export default function InvestorForm() {
 
           <div className="form-grid">
             <div className="form-group">
-              <label className="required-field">Firm Name</label>
+              <label className="required-field">Investment Firm Name</label>
               <input
                 type="text"
                 name="firmName"
                 value={formData.firmName}
                 onChange={handleInputChange}
-                placeholder="e.g., Sequoia Capital, or Independent Angel"
+                placeholder="e.g., XYZ Ventures"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label className="required-field">Website</label>
+              <label className="required-field">Investment Stage Focus</label>
+              <input
+                type="text"
+                name="investmentStage"
+                value={formData.investmentStage}
+                onChange={handleInputChange}
+                placeholder="e.g., Seed, Series A"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Portfolio Size</label>
+              <input
+                type="text"
+                name="portfolioSize"
+                value={formData.portfolioSize}
+                onChange={handleInputChange}
+                placeholder="e.g., $10M"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Website</label>
               <input
                 type="url"
                 name="website"
                 value={formData.website}
                 onChange={handleInputChange}
-                placeholder="e.g., https://yourfirm.com"
-                required
+                placeholder="http://www.yourfirm.com"
               />
             </div>
           </div>
 
           <div className="form-grid">
             <div className="form-group">
-              <label>Investment Stage Focus</label>
-              <select 
-                name="investmentStage"
-                value={formData.investmentStage}
-                onChange={handleInputChange}
-              >
-                <option value="">Select investment stage...</option>
-                <option value="pre-seed">Pre-seed</option>
-                <option value="seed">Seed</option>
-                <option value="series-a">Series A</option>
-                <option value="series-b">Series B</option>
-                <option value="growth">Growth</option>
-                <option value="all">All Stages</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Number of Investments</label>
-              <input
-                type="number"
-                name="portfolioSize"
-                value={formData.portfolioSize}
-                onChange={handleInputChange}
-                placeholder="e.g., 15"
-                min="0"
-              />
-            </div>
-          </div>
-
-          <div className="form-grid">
-            <div className="form-group">
-              <label>Min Investment Amount</label>
+              <label>Min Investment</label>
               <input
                 type="text"
                 name="minInvestment"
                 value={formData.minInvestment}
                 onChange={handleInputChange}
-                placeholder="e.g., $25,000"
+                placeholder="$10,000"
               />
             </div>
 
             <div className="form-group">
-              <label>Max Investment Amount</label>
+              <label>Max Investment</label>
               <input
                 type="text"
                 name="maxInvestment"
                 value={formData.maxInvestment}
                 onChange={handleInputChange}
-                placeholder="e.g., $250,000"
+                placeholder="$500,000"
               />
             </div>
           </div>
-
-          <div className="form-group full-width">
-            <label>Investment Sectors</label>
-            <Select
-              isMulti
-              options={sectorsOptions}
-              onChange={handleSectorChange}
-              value={formData.sectors.split(", ").map((sector) => ({ value: sector, label: sector }))}
-              placeholder="Select sectors"
-            />
-          </div>
         </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-primary">
-            Verify & Complete Profile
-          </button>
+        {/* Investment Interests */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>📊 Investment Interests</h2>
+            <p>Let us know your preferred sectors</p>
+          </div>
+
+          <Select
+            options={sectorsOptions}
+            isMulti
+            name="sectors"
+            onChange={handleSectorChange}
+            className="select-dropdown"
+            value={formData.sectors ? sectorsOptions.filter((option) => formData.sectors.includes(option.value)) : []}
+          />
+        </div>
+
+        <div className="form-submit">
+          <button type="submit" className="submit-btn">Submit</button>
         </div>
       </form>
+
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
     </div>
-  )
+  );
 }
