@@ -11,6 +11,8 @@ import InvestorsPage from "./pages/InvestorsPage";
 import PostsPage from "./pages/PostsPage";
 import SettingsPage from "./pages/SettingsPage";
 import AdminLogin from "./pages/AdminLogin";
+import EntHome from "./pages/EntreprenuerHome";
+
 
 
 export default function AppRoutes() {
@@ -23,12 +25,14 @@ export default function AppRoutes() {
         <Route path="/new-password/:uidb64/:token" element={<NewPassword />} />
         <Route path="/user-form" element={<UserForm />} />
         <Route path="/investor-form" element={<InvestorForm />} />
-        <Route path="/admin-panel" element ={<AdminPanel/>}></Route>
-        <Route path="/admin/users" element={<UsersPage />} />
-        <Route path="/admin/investors" element={<InvestorsPage />} />
-        <Route path="/admin/Posts" element={<PostsPage />} />
-        <Route path="/admin/settings" element={<SettingsPage />} />
+        <Route path="/admin-panel" element={<AdminPanel />} />
+        <Route path="/users" element={<UsersPage />} />
+        <Route path="/investors" element={<InvestorsPage />} />
+        <Route path="/posts" element={<PostsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/ent-home" element={<EntHome />} />
+
       </Routes>
     </Router>
   );
