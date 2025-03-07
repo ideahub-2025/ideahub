@@ -4,6 +4,7 @@ import UsersPage from "./UsersPage";
 import InvestorsPage from "./InvestorsPage";
 import PostsPage from "./PostsPage";
 import SettingsPage from "./SettingsPage";
+import CreateEvent from "./CreateEvent"; // Updated import with new file name
 import "../App.css";
 
 export default function AdminPanel() {
@@ -24,8 +25,7 @@ export default function AdminPanel() {
     { id: 2, link: "http://postlink2.com", date: "2023-03-02", isActive: false },
   ]);
 
-  // Functions to handle updates (omitted for brevity)
-
+  // Render content based on current tab
   const renderContent = () => {
     switch (page) {
       case "users":
@@ -62,6 +62,8 @@ export default function AdminPanel() {
         );
       case "settings":
         return <SettingsPage onLogout={() => console.log("Logging out...")} />;
+      case "createEvent":
+        return <CreateEvent />;
       default:
         return null;
     }
@@ -77,27 +79,7 @@ export default function AdminPanel() {
               <Lightbulb className="logoIcon" />
               <span className="logoText">IdeaHub Admin</span>
             </a>
-            <div className="searchWrapper">
-              <Search className="searchIconWrapper" />
-              <input
-                type="text"
-                className="searchInput"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="userActions">
-              <button className="iconButton">
-                <Bell />
-              </button>
-              <button className="iconButton">
-                <MessageSquare />
-              </button>
-              <div className="userAvatar">
-                <img src="/defaultpp.jpg" alt="Admin" />
-              </div>
-            </div>
+            {/* Removed user actions (notifications, chat, profile picture) */}
           </nav>
         </div>
       </header>
@@ -119,6 +101,9 @@ export default function AdminPanel() {
               </li>
               <li>
                 <button onClick={() => setPage("settings")}>Settings</button>
+              </li>
+              <li>
+                <button onClick={() => setPage("createEvent")}>Create Event</button>
               </li>
             </ul>
           </div>

@@ -12,8 +12,7 @@ import PostsPage from "./pages/PostsPage";
 import SettingsPage from "./pages/SettingsPage";
 import AdminLogin from "./pages/AdminLogin";
 import EntHome from "./pages/EntreprenuerHome";
-
-
+import CreateEvent from "./pages/CreateEvent";  // New import for the CreateEvent component
 
 export default function AppRoutes() {
   return (
@@ -26,13 +25,13 @@ export default function AppRoutes() {
         <Route path="/user-form" element={<UserForm />} />
         <Route path="/investor-form" element={<InvestorForm />} />
         <Route path="/admin-panel" element={<AdminPanel />} />
+        <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/investors" element={<InvestorsPage />} />
         <Route path="/posts" element={<PostsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/ent-home" element={<EntHome />} />
-
       </Routes>
     </Router>
   );
