@@ -2227,4 +2227,220 @@ button:hover {
 .submitButton:hover {
   background-color: #eab308;
 }
+.responsive-table tbody tr:hover td {
+  background-color: #efe7d64e !important;
+}
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-x: hidden;
+  max-height: 90vh;
+}
+
+
+.form-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-img {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: Arima, sans-serif;
+}
+
+.profile-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.document-link {
+  color: #FDBB1A;
+  text-decoration: none;
+}
+
+.document-link:hover {
+  text-decoration: underline;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn {
+  background-color: #FDBB1A;
+  color: #262626;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: "Gentium Book Basic", serif;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #eab308;
+}
+
+.btn-secondary {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 15px;
+  }
+  .btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+.settings-page {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 600px; /* Optional: constrain the width */
+}
+
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 10px;
+}
+
+.event-card {
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  /* box-sizing ensures content widths behave consistently */
+  box-sizing: border-box;
+}
+.error-message {
+  color: red;
+  margin-top: 8px;
+}
+.modal-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* Form field styles for modals */
+.modal input,
+.modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.modal input:hover,
+.modal textarea:hover {
+  border-color: #fdbb1a; /* Yellow hover border */
+}
+
+.modal input:focus,
+.modal textarea:focus {
+  outline: none;
+  border-color: #eab308;
+  box-shadow: 0 0 5px rgba(235, 179, 8, 0.5);
+}
+
+/* Carousel card hover effect */
+.event-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Button spacing (if not already defined) */
+.modal-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.modal input[type="date"]::placeholder {
+  content: "dd-mm-yyyy"; /* Not all browsers honor placeholder on date inputs */
+}
+/* Global styling for all read-only inputs and textareas */
+input[readonly],
+textarea[readonly] {
+  background-color: #e0e0e0; /* Light grey */
+}
