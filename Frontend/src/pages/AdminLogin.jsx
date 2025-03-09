@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Removed useParams as it's no longer needed
+import { useNavigate } from "react-router-dom"; 
 import logo from "../assets/logo.png";
 import "../App.css";
 
@@ -25,7 +25,7 @@ export default function AdminLogin() {
 
     // Make API call to the admin login endpoint
     try {
-      const response = await fetch("http://localhost:8000/api/admin/login/", {
+      const response = await fetch("http://localhost:8000/api/admin_login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export default function AdminLogin() {
 
       if (response.ok) {
         setSuccessMessage("Login successful! Redirecting...");
-        setTimeout(() => navigate('/admin/dashboard'), 500);
+        setTimeout(() => navigate('/admin-panel'), 500);
       } else {
         setError(data.error || "An unexpected error occurred. Please try again.");
       }

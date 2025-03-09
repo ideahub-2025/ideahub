@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from pymongo import MongoClient
+import logging
+from datetime import timedelta
+logger = logging.getLogger("django")
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -12,6 +15,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+
 
 TEMPLATES = [
     {
@@ -42,6 +47,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
      'rest_framework.authtoken',
+     "django_extensions",
+     
     
 ]
 
@@ -54,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 ROOT_URLCONF = "ideahub_backend.urls"
@@ -61,7 +69,7 @@ ROOT_URLCONF = "ideahub_backend.urls"
 # MongoDB Atlas connection
 MONGO_URI = os.getenv("MONGO_URI")  # MongoDB Atlas connection string
 MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
-
+MONGO_CLIENT_URL="mongodb+srv://ideahub:idea123@cluster0.uw8l5.mongodb.net/?retryWrites=true&w=majority"
 # MongoDB configuration
 
 DATABASES = {
@@ -79,12 +87,20 @@ DATABASES = {
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Ensure "Bearer" token format
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
@@ -152,3 +168,22 @@ TEMPLATES = [
 # Media files settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
