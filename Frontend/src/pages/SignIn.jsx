@@ -20,48 +20,48 @@ const goToReset = () => {
   const [successMessage, setSuccessMessage] = useState(""); // Success message state
 
   const handleSignIn = async () => {
-    // Check if fields are empty
     if (username.trim() === "" || password.trim() === "") {
       setError("Both Username and Password are required!");
       return;
     }
-
-    setError(""); // Clear error if inputs are valid
-
+  
+    setError("");
+  
     const userData = { username, password };
-
+  
     try {
-      const response = await axios.post('http://localhost:8000/api/sign_in/', userData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await axios.post("http://localhost:8000/api/sign_in/", userData, {
+        headers: { "Content-Type": "application/json" },
       });
-
-      // Assuming the response contains the token and user role
-      console.log(response.data);
-      setSuccessMessage("Sign-in successful! Redirecting...");
-
-      // Store tokens and user data in localStorage
-      localStorage.setItem('refreshToken', response.data.refresh);
-      localStorage.setItem('accessToken', response.data.access);
-      localStorage.setItem('username', response.data.username);
-      localStorage.setItem('role', response.data.role);
-
-      // Redirect to dashboard based on role
-      if (response.data.role === "entrepreneur") {
-        navigate("/entrepreneur-dashboard");  // Redirect to Entrepreneur dashboard
-      } else if (response.data.role === "investor") {
-        navigate("/investor-dashboard");  // Redirect to Investor dashboard
+  
+      // ✅ Log the response data to check if tokens are received
+      console.log("API Response:", response.data);
+  
+      // ✅ Confirm tokens exist before storing them
+      if (response.data.access && response.data.refresh) {
+        localStorage.setItem("refreshToken", response.data.refresh);
+        localStorage.setItem("accessToken", response.data.access);
+        localStorage.setItem("username", response.data.username);
+        localStorage.setItem("role", response.data.role);
+  
+        setSuccessMessage("Sign-in successful! Redirecting...");
+  
+        // Redirect based on role
+        if (response.data.role === "entrepreneur") {
+          navigate("/ent-home");
+        } else if (response.data.role === "investor") {
+          navigate("/investor-dashboard");
+        } 
       } else {
-        navigate("/default-dashboard");  // Default dashboard if role is unknown
+        throw new Error("Missing tokens in response!");
       }
-
     } catch (error) {
-      console.error("There was an error during sign-in:", error);
+      console.error("Sign-in error:", error);
       const errorMessage = error.response ? error.response.data.error || "Sign-in failed! Please try again." : "Network error. Please try again.";
-      setError(errorMessage);  // Set the error message to display
+      setError(errorMessage);
     }
   };
+  
 
   return (
     <div className="page-container"> 

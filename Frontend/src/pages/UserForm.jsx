@@ -12,7 +12,7 @@ export default function UserForm() {
   console.log(username, fullName, role, email);
 
   const [formData, setFormData] = useState({
-    role: "",
+    job_role: "",
     location: "",
     bio: "",
     phone: "",
@@ -126,7 +126,7 @@ export default function UserForm() {
               <input
                 type="text"
                 name="role"
-                value={formData.role}
+                value={formData.job_role}
                 onChange={handleInputChange}
                 placeholder="e.g., CEO & Co-Founder"
               />
