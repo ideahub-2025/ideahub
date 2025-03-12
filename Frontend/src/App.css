@@ -2228,3 +2228,912 @@ button:hover {
   background-color: #eab308;
 }
 
+/* Investor Homepage*/
+
+
+.Inst-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header/Navigation */
+.headerSection {
+  background-color: #fdbb1a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navigationBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+  padding: 0 20px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 8px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+.logoText {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+.investorBadge {
+  background-color: orange;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+.searchWrapper {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 20px;
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .searchWrapper {
+    display: block;
+  }
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border-radius: 20px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+}
+
+.searchIconWrapper {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 15px;
+  cursor: pointer;
+  position: relative;
+}
+
+.iconButton:hover {
+  opacity: 0.8;
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+  border: 2px solid white;
+  overflow: hidden;
+}
+
+.userAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Hero Section */
+.heroSection {
+  background: linear-gradient(to bottom, #fdbb1a, #ffd166);
+  padding: 60px 20px;
+  color: white;
+}
+
+.heroWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .heroWrapper {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.heroContent {
+  margin-bottom: 30px;
+}
+
+@media (min-width: 768px) {
+  .heroContent {
+    width: 50%;
+    margin-bottom: 0;
+  }
+
+  .heroImageContainer {
+    width: 45%;
+  }
+}
+
+.heroTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+@media (min-width: 768px) {
+  .heroTitle {
+    font-size: 48px;
+  }
+}
+
+.heroSubtitle {
+  font-size: 18px;
+  margin-bottom: 25px;
+  opacity: 0.9;
+}
+
+.primaryButton {
+  background-color: white;
+  color: #fdbb1a;
+  border: none;
+  padding: 12px 24px;
+  font-family: "Gentium Book Basic", serif;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.primaryButton:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.primaryButton svg {
+  margin-right: 8px;
+}
+
+
+
+/* Main Dashboard */
+.dashboardSection {
+  padding: 40px 20px;
+}
+
+.dashboardLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .dashboardLayout {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+/* Sidebar */
+.card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.cardHeader {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.cardTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cardDescription {
+  font-size: 14px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.cardContent {
+  padding: 20px;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profilePicture {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  overflow: hidden;
+}
+
+.profilePicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userName {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.userRole {
+  font-size: 14px;
+  color: #888;
+}
+
+.statsSection {
+  margin-top: 20px;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.statName {
+  font-size: 14px;
+  color: #888;
+}
+
+.statValue {
+  font-weight: 600;
+}
+
+.secondaryButton {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.secondaryButton:hover {
+  background-color: #f9f9f9;
+}
+
+/* Investment Summary */
+.summaryItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summaryItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.summaryIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #fff8e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  color: #fdbb1a;
+}
+
+.summaryDetails {
+  flex: 1;
+}
+
+.summaryTitle {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.summaryValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.textLink {
+  background: none;
+  border: none;
+  color: #fdbb1a;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.textLink:hover {
+  text-decoration: underline;
+}
+
+.textLink svg {
+  margin-left: 5px;
+}
+
+/* Tabs */
+.tabsContainer {
+  margin-bottom: 20px;
+}
+
+.tabsList {
+  display: flex;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  background: none;
+  border: none;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tabButtonActive {
+  background-color: white;
+  font-weight: 600;
+}
+
+.tabPanel {
+  display: none;
+}
+
+.tabPanelActive {
+  display: block;
+}
+
+/* Startup Cards */
+.ideaCard {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.ideaCard:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ideaCardHeader {
+  padding: 20px 20px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ideaTitleSection {
+  flex: 1;
+}
+
+.ideaTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+}
+
+.authorPicture {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+  overflow: hidden;
+}
+
+.authorPicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.authorName {
+  font-size: 12px;
+  color: #888;
+}
+
+.startupTags {
+  display: flex;
+  gap: 8px;
+}
+
+.categoryTag {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #fff8e6;
+  border: 1px solid #ffeeba;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #fdbb1a;
+}
+
+.ideaCardContent {
+  padding: 0 20px 20px;
+}
+
+.ideaDescription {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.fundingProgress {
+  margin-top: 15px;
+}
+
+.fundingDetails {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.fundingRaised {
+  font-weight: 600;
+  color: #fdbb1a;
+}
+
+.fundingGoal {
+  font-size: 14px;
+  color: #888;
+}
+
+.progressBar {
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #fdbb1a;
+  border-radius: 4px;
+}
+
+.ideaCardFooter {
+  padding: 15px 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.engagementActions {
+  display: flex;
+  align-items: center;
+}
+
+.engagementButton {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: #888;
+  margin-right: 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.engagementButton:hover {
+  color: #fdbb1a;
+}
+
+.engagementButton svg {
+  margin-right: 5px;
+}
+
+.viewCount {
+  display: flex;
+  align-items: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.viewCount svg {
+  margin-right: 5px;
+  width: 14px;
+  height: 14px;
+}
+
+.accentButton {
+  background-color: #fdbb1a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accentButton:hover {
+  background-color: #eab308;
+}
+
+.loadMoreButton {
+  width: 100%;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.loadMoreButton:hover {
+  background-color: #f9f9f9;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.emptyStateIcon {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.emptyStateTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.emptyStateMessage {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+/* Events Section */
+.spotlightSection {
+  background-color: #f9f9f9;
+  padding: 40px 20px;
+  margin-top: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sectionTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.eventCard {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.eventCard:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.eventDate {
+  width: 80px;
+  background-color: #fdbb1a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+}
+
+.eventMonth {
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.eventDay {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.eventDetails {
+  flex: 1;
+  padding: 15px;
+}
+
+.eventTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.eventLocation {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.eventDescription {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.eventFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eventAttendees {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Footer */
+.footerSection {
+  background-color: #333;
+  color: white;
+  padding: 40px 20px;
+  margin-top: 40px;
+}
+
+.footerLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+@media (min-width: 768px) {
+  .footerLayout {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.footerColumn h3 {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.footerColumn p {
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+.footerLinks {
+  list-style: none;
+}
+
+.footerLinks li {
+  margin-bottom: 10px;
+}
+
+.footerLinks a {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.footerLinks a:hover {
+  color: #fdbb1a;
+}
+
+.footerCopyright {
+  text-align: center;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid #444;
+  font-size: 12px;
+  color: #777;
+}
+
+/* Dialog/Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContainer {
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modalTitle {
+  font-family: "Gentium Book Basic", serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.modalDescription {
+  font-size: 14px;
+  color: #888;
+}
+
+.modalContent {
+  padding: 20px;
+}
+
+.formLayout {
+  display: grid;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.formInput {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+}
+
+.formSelect {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: "Arima", sans-serif;
+  font-size: 14px;
+  background-color: white;
+}
+
+.modalFooter {
+  padding: 15px 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancelButton {
+  background: none;
+  border: none;
+  color: #888;
+  margin-right: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submitButton {
+  background-color: #fdbb1a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-family: "Gentium Book Basic", serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #eab308;
+}
+
