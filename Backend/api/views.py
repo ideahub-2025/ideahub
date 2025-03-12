@@ -34,7 +34,7 @@ from pymongo import MongoClient
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view, permission_classes
 from .general_functionality import insert_to_mongo, count_documents,update_field_by_username ,get_record_completion_percentage,get_table_data
-
+import os
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
@@ -456,6 +456,7 @@ class EntrepreneurProfileView(APIView):
                 "last_login": entrepreneur.last_login,
             }
             try:
+                completion_percentage=0
                 percent_response=get_record_completion_percentage("api_entrepreneur", username)
                 completion_percentage=percent_response.data.get("completion_percentage")
                 try:
@@ -587,6 +588,70 @@ class IdeaListCreateView(APIView):
         # Convert ObjectId to string for each document
         ideas = result["data"]
         for idea in ideas:
-            idea["_id"] = str(idea["_id"])  # Convert ObjectId to string
+            if "_id" in idea:
+                idea["_id"] = str(idea["_id"])
+
+            # Convert Base64 image to a media file and serve as URL
+            # Convert Base64 image to a media file
+            if "image" in idea and isinstance(idea["image"], str):
+                if idea["image"].startswith("/9j/"):  # Base64 detection
+                    image_filename = f"{idea['_id']}.jpg"
+                    image_path = os.path.join(settings.MEDIA_ROOT, image_filename)
+
+                    # Save Base64 as an actual image file
+                    with open(image_path, "wb") as img_file:
+                        img_file.write(base64.b64decode(idea["image"]))
+
+                    # Replace Base64 data with URL
+                    idea["image"] = f"{settings.MEDIA_URL}{image_filename}"
+                else:
+                    # If already a valid URL, keep it
+                    idea["image"] = idea["image"]
+
+        return Response({"status": True, "data": ideas}, status=status.HTTP_200_OK)
+
+class TrendingIdeaView(APIView):
+    permission_classes = []  # No authentication required
+
+    def get(self, request):
+        username = request.GET.get("username")
+
+        # Modify query to exclude the given username
+        query = {"username": {"$ne": username}} if username else {}
+
+        # Fetch data from MongoDB
+        result = get_table_data("api_idea", query)
+
+        # Handle database errors
+        if not result.get("status", True):
+            return Response(
+                {"status": False, "message": "Error fetching data"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Ensure 'data' key exists and is a list
+        ideas = result.get("data", [])
+
+        # Convert ObjectId to string for each document and fix image handling
+        for idea in ideas:
+            if "_id" in idea:
+                idea["_id"] = str(idea["_id"])
+
+            # Convert Base64 image to a media file and serve as URL
+            # Convert Base64 image to a media file
+            if "image" in idea and isinstance(idea["image"], str):
+                if idea["image"].startswith("/9j/"):  # Base64 detection
+                    image_filename = f"{idea['_id']}.jpg"
+                    image_path = os.path.join(settings.MEDIA_ROOT, image_filename)
+
+                    # Save Base64 as an actual image file
+                    with open(image_path, "wb") as img_file:
+                        img_file.write(base64.b64decode(idea["image"]))
+
+                    # Replace Base64 data with URL
+                    idea["image"] = f"{settings.MEDIA_URL}{image_filename}"
+                else:
+                    # If already a valid URL, keep it
+                    idea["image"] = idea["image"]
 
         return Response({"status": True, "data": ideas}, status=status.HTTP_200_OK)
