@@ -18,7 +18,7 @@ export default function EntHome() {
     setImage(null);
   };
   const [yourIdeas, setYourIdeas] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,48 +28,8 @@ export default function EntHome() {
   const [activeTab, setActiveTab] = useState("trending");
   const [photoPreview, setPhotoPreview] = useState(null);
   const fileInputRef = useRef(null);
-  const [trendingIdeas, setTrendingIdeas] = useState([
-    {
-      id: 1,
-      title: "AI-Powered Financial Advisor",
-      description: "An AI-driven app that provides personalized financial advice based on user spending habits.",
-      author: "John Doe",
-      avatar: "/placeholder.svg?height=40&width=40",
-      likes: 245,
-      comments: 30,
-      category: "Finance",
-    },
-    {
-      id: 2,
-      title: "Eco-Friendly Packaging",
-      description: "Biodegradable packaging made from sustainable materials to reduce plastic waste.",
-      author: "Jane Smith",
-      avatar: "/placeholder.svg?height=40&width=40",
-      likes: 187,
-      comments: 45,
-      category: "Sustainability",
-    },
-    {
-      id: 3,
-      title: "Remote Healthcare Platform",
-      description: "A telemedicine solution that connects patients with doctors using AI diagnostics.",
-      author: "Alex Johnson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      likes: 320,
-      comments: 50,
-      category: "Healthcare",
-    },
-    {
-      id: 4,
-      title: "Smart Farming Assistant",
-      description: "An IoT-based solution that helps farmers optimize irrigation and monitor crop health.",
-      author: "Michael Brown",
-      avatar: "/placeholder.svg?height=40&width=40",
-      likes: 142,
-      comments: 25,
-      category: "Agriculture",
-    },
-  ]);
+  const [trendingIdeas, setTrendingIdeas] = useState([]);
+
   
   const [isIdeaDialogOpen, setIsIdeaDialogOpen] = useState(false);
   const [isSomeOtherDialogOpen, setIsSomeOtherDialogOpen] = useState(false);
@@ -82,9 +42,41 @@ export default function EntHome() {
   const [image, setImage] = useState(null);
 
   
-    const [events, setEvents] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
- 
+  const [events, setEvents] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+
+  
+
+  useEffect(() => {
+    if (!username) return;
+  
+    const fetchTrendingIdeas = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:8000/api/trending-ideas/?username=${username}`);
+        const data = await response.json();
+  
+        console.log("Trending Ideas API Response:", data); // ✅ Check what `image` contains
+  
+        if (response.ok && data.status) {
+          setTrendingIdeas(data.data);
+        } else {
+          setError("Failed to load trending ideas.");
+        }
+      } catch (error) {
+        console.error("Error fetching trending ideas:", error);
+        setError("Failed to fetch trending ideas. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchTrendingIdeas();
+  }, [username]);
+  
+  
+    
   
     useEffect(() => {
       const fetchYourIdeas = async () => {
@@ -399,47 +391,62 @@ export default function EntHome() {
                   </button>
                 </div>
 
-                {/* Trending Ideas Tab */}
-                {/* Trending Ideas Tab */}
+                
  {/* Trending Ideas Tab */}
  <div className={`tabPanel ${activeTab === "trending" ? "tabPanelActive" : ""}`}>
-                  {trendingIdeas.map((idea) => (
-                    <div key={idea.id} className="ideaCard">
-                      <div className="ideaCardHeader">
-                        <div className="ideaTitleSection">
-                          <h3 className="ideaTitle">{idea.title}</h3>
-                          <div className="authorInfo">
-                            <div className="authorPicture">
-                              <img src={pp} alt={idea.author} />
-                            </div>
-                            <span className="authorName">{idea.author}</span>
-                          </div>
-                        </div>
-                        <span className="categoryTag">{idea.category}</span>
-                      </div>
-                      <div className="ideaCardContent">
-                        <p className="ideaDescription">{idea.description}</p>
-                      </div>
-                      <div className="ideaCardFooter">
-                        <div className="engagementActions">
-                          <button className="engagementButton">
-                            <ThumbsUp />
-                            {idea.likes}
-                          </button>
-                          <button className="engagementButton">
-                            <MessageSquare />
-                            {idea.comments}
-                          </button>
-                        </div>
-                        <button className="saveButton">
-                          <Star />
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  <button className="loadMoreButton">Load More Ideas</button>
-                </div>
+    {trendingIdeas && trendingIdeas.length > 0 ? (
+      trendingIdeas.map((trend_idea, index) => (
+    
+      <div key={trend_idea._id || trend_idea.id} className="ideaCard"> {/* Ensure unique key */}
+        <div className="ideaCardHeader">
+          <div className="ideaTitleSection">
+            <h3 className="ideaTitle">{trend_idea.title}</h3>
+            <div className="authorInfo">
+              <div className="authorPicture">
+                        <img
+
+            src={
+              trend_idea.image && trend_idea.image.startsWith("/media/") // ✅ Ensure only valid URLs
+                ? `http://localhost:8000${trend_idea.image}`
+                : pp
+            }
+            alt={trend_idea.username || "Unknown Author"}
+            onError={(e) => (e.target.src = "pp")} // ✅ Prevent broken images
+          />
+          
+
+
+              </div>
+              <span className="authorName">{trend_idea.username || "Anonymous"}</span>
+            </div>
+          </div>
+          <span className="categoryTag">{trend_idea.category || "Uncategorized"}</span>
+        </div>
+        <div className="ideaCardContent">
+          <p className="ideaDescription">{trend_idea.description || "No description available."}</p>
+        </div>
+        <div className="ideaCardFooter">
+          <div className="engagementActions">
+            <button className="engagementButton">
+              <ThumbsUp /> {trend_idea.like_count || 0} {/* Ensure like count is displayed */}
+            </button>
+            <button className="engagementButton">
+              <MessageSquare /> {Array.isArray(trend_idea.comments) ? trend_idea.comments.length : 0} {/* Handle comments safely */}
+            </button>
+          </div>
+          <button className="saveButton">
+            <Star /> Save
+          </button>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="emptyStateMessage">No trending ideas available.</p>
+  )}
+  {trendingIdeas.length > 0 && <button className="loadMoreButton">Load More Ideas</button>}
+</div>
+
+  
 
 {/* Your Ideas Tab */}
 <div className={`tabPanel ${activeTab === "your-ideas" ? "tabPanelActive" : ""}`}>
@@ -451,10 +458,14 @@ export default function EntHome() {
             <h3 className="ideaTitle">{idea.title}</h3>
             <div className="authorInfo">
               <div className="authorPicture">
-                <img
-                  src={idea.image ? idea.image : pp} 
-                  alt={idea.username} 
-                  onError={(e) => (e.target.src = pp)} // Fallback to default image if broken
+              <img
+                  src={
+                    idea.image && !idea.image.startsWith("data:image") && idea.image.startsWith("/media/") // ✅ Ensure it's a valid URL
+                      ? `http://localhost:8000${idea.image}`
+                      : pp // ✅ Fallback for missing images
+                  }
+                  alt={idea.username || "Unknown Author"}
+                  onError={(e) => (e.target.src = pp)} // ✅ Prevent broken images
                 />
               </div>
               <span className="authorName">{idea.username}</span>
@@ -498,7 +509,6 @@ export default function EntHome() {
     </div>
   )}
 </div>
-
 
 
 

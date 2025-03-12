@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import UpcomingEventsView,IdeaListCreateViewpost,  UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView
+from .views import UpcomingEventsView,IdeaListCreateViewpost,  TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -16,6 +16,7 @@ urlpatterns = [
     path('entrepreneur/profile/', EntrepreneurProfileView.as_view(), name='entrepreneur-profile'),
     path('events/upcoming/', UpcomingEventsView.as_view(), name='upcoming-events'),
     path('ideas/', IdeaListCreateView.as_view(), name='idea-list-create'),
-     path('ideas_post/', IdeaListCreateViewpost.as_view(), name='idea-list-create-post'),
+    path('ideas_post/', IdeaListCreateViewpost.as_view(), name='idea-list-create-post'),
+    path('trending-ideas/', TrendingIdeaView.as_view(), name='trending-idea'),
     
 ]

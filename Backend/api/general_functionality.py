@@ -14,6 +14,7 @@ def get_table_data(collection_name, query=None):
         query = query or {}
         data = list(collection.find(query))
         
+        
     except PyMongoError as e:
         return {"status": False, "error": f"Database error: {str(e)}"}
     except Exception as e:
