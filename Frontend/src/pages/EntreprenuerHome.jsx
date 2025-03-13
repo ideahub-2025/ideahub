@@ -9,7 +9,8 @@ export default function EntHome() {
   const [activeTab, setActiveTab] = useState("trending")
   const [photoPreview, setPhotoPreview] = useState(null)
   const fileInputRef = useRef(null)
-  
+  const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
+  const [commentText, setCommentText] = useState("");
   const [idea, setIdea] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [trendingIdeas, setTrendingIdeas] = useState([
@@ -240,7 +241,9 @@ export default function EntHome() {
                             <ThumbsUp />
                             {idea.likes}
                           </button>
-                          <button className="engagementButton">
+                          <button className="engagementButton"
+                          onClick={() => setIsCommentDialogOpen(true)}
+                          >
                             <MessageSquare />
                             {idea.comments}
                           </button>
@@ -499,7 +502,53 @@ export default function EntHome() {
       </div>
       
       )}
-    </div>
+      {/* Comment Dialog */}
+      {isCommentDialogOpen && (
+        <div className="modalOverlay" onClick={() => setIsCommentDialogOpen(false)}>
+          <div className="comment-dialog-container" onClick={(e) => e.stopPropagation()}>
+            <div className="comment-dialog-header">
+              <h2 className="comment-dialog-title">Add Comment</h2>
+              <p className="comment-dialog-description">Share your thoughts about this startup</p>
+            </div>
+
+            <div className="comment-dialog-content">
+              <div className="comment-dialog-form-group">
+                <textarea
+                  className="comment-dialog-input"
+                  rows="4"
+                  placeholder="Write your comment here..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                />
+              </div>
+
+            </div>
+
+            <div className="comment-dialog-footer">
+              <button
+                className="comment-dialog-cancel"
+                onClick={() => {
+                  setIsCommentDialogOpen(false);
+                  setCommentText("");
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="comment-dialog-submit"
+                disabled={!commentText.trim()}
+                onClick={() => {
+                  setIsCommentDialogOpen(false);
+                  setCommentText("");
+                }}
+              >
+                Post Comment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>    
   )
 }
 
