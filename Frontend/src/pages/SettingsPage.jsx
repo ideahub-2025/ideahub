@@ -6,7 +6,7 @@ const SettingsPage = () => {
   const navigate = useNavigate();
 
   // Stored credentials (in a real app, these would come securely from backend)
-  const [email, setEmail] = useState("admin@example.com");
+  const [email, setEmail] = useState("admin@ideahub.com");
   const [password, setPassword] = useState("password123");
 
   // Modal state flags

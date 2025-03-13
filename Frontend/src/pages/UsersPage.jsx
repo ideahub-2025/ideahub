@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png"; 
+import pp from "../assets/defaultpp.jpg";
 const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [editingUser, setEditingUser] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmationType, setConfirmationType] = useState(null); // "valid" or "invalid"
-
+  
   // Filter users based on search term and filter status.
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === "All" ? true : user.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
-
+  const filteredUsers = Array.isArray(users)
+  ? users.filter((user) => {
+      const matchesSearch = user.full_name?.toLowerCase().includes(searchTerm?.toLowerCase() || "");
+      const matchesFilter = filterStatus === "All" || user.status === filterStatus;
+      return matchesSearch && matchesFilter;
+    })
+  : [];
+    
   // All possible status options for users.
   const allStatusOptions = ["Active", "Inactive"];
 
@@ -162,17 +165,22 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
             <tr key={user.id}>
               <td>{user.id}</td>
               <td>
-                {user.photo ? (
-                  <img
-                    src={user.photo}
-                    alt="User"
-                    style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                  />
-                ) : (
-                  "N/A"
-                )}
+              {user?.profile_picture ? (
+  <img
+    src={user.profile_picture.startsWith("http") ? user.profile_picture : `http://localhost:8000/media/${user.profile_picture}`}
+    alt="Profile"
+    style={{ width: "50px", height: "50px", objectFit: "cover" }}
+  />
+) : (
+  <img
+    src={pp}
+    alt="Default Profile"
+    style={{ width: "50px", height: "50px", objectFit: "cover" }}
+  />
+)}
+
               </td>
-              <td>{user.name}</td>
+              <td>{user.full_name}</td>
               <td>{user.email}</td>
               <td>{user.status}</td>
               <td>
@@ -194,17 +202,22 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
       <form>
         <div className="form-group">
           <label>Photo:</label>
-          {editingUser.photo ? (
-            <img src={editingUser.photo} alt="User" className="profile-img" />
-          ) : (
-            "N/A"
-          )}
+          {editingUser.profile_picture ? (
+  <img src={`http://localhost:8000/media/${editingUser.profile_picture}`} alt="User" className="profile-img" />
+) : (
+  <img
+                src={pp}
+                alt="Default Profile"
+                style={{ width: "50px", height: "50px", objectFit: "cover" }}
+              />
+)}
+
         </div>
         <div className="form-group">
           <label>Name:</label>
           <input
             type="text"
-            value={editingUser.name || ""}
+            value={editingUser.full_name || ""}
             readOnly
             className="form-control"
           />
@@ -222,7 +235,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Role:</label>
           <input
             type="text"
-            value={editingUser.role || ""}
+            value={editingUser.job_role || ""}
             readOnly
             className="form-control"
           />
@@ -275,7 +288,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Startup Name:</label>
           <input
             type="text"
-            value={editingUser.startupName || ""}
+            value={editingUser.startup_name || ""}
             readOnly
             className="form-control"
           />
@@ -284,7 +297,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Start Date:</label>
           <input
             type="text"
-            value={editingUser.startDate || ""}
+            value={editingUser.start_date || ""}
             readOnly
             className="form-control"
           />
@@ -293,7 +306,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Team Size:</label>
           <input
             type="text"
-            value={editingUser.teamSize || ""}
+            value={editingUser.team_size || ""}
             readOnly
             className="form-control"
           />

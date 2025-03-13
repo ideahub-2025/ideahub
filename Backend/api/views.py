@@ -655,3 +655,43 @@ class TrendingIdeaView(APIView):
                     idea["image"] = idea["image"]
 
         return Response({"status": True, "data": ideas}, status=status.HTTP_200_OK)
+
+class get_user_details(APIView):
+    permission_classes = []  
+    def get(self, request):
+        result = get_table_data("api_entrepreneur", None)
+        if not result.get("status", True):
+            return Response(
+                {"status": False, "message": "Error fetching data"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Ensure 'data' key exists and is a list
+        user_data = result.get("data", [])
+
+        # Convert ObjectId to string for each document and fix image handling
+        for user in user_data:
+            if "_id" in user:
+                user["_id"] = str(user["_id"])
+
+            # Convert Base64 image to a media file and serve as URL
+            # Convert Base64 image to a media file
+            if "image" in user and isinstance(user["image"], str):
+                if user["image"].startswith("/9j/"):  # Base64 detection
+                    image_filename = f"{user['_id']}.jpg"
+                    image_path = os.path.join(settings.MEDIA_ROOT, image_filename)
+
+                    # Save Base64 as an actual image file
+                    with open(image_path, "wb") as img_file:
+                        img_file.write(base64.b64decode(user["image"]))
+
+                    # Replace Base64 data with URL
+                    user["image"] = f"{settings.MEDIA_URL}{image_filename}"
+                    print(settings.MEDIA_URL)
+                else:
+                    # If already a valid URL, keep it
+                    user["image"] = f"{settings.MEDIA_URL}{user["image"]}"
+        
+        # print(user_data)
+
+        return Response({"status": True, "data": user_data}, status=status.HTTP_200_OK)

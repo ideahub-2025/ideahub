@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
+import pp from "../assets/defaultpp.jpg";
 
 const InvestorsPage = ({ investors, onSaveInvestor }) => {
   const [filterStatus, setFilterStatus] = useState("All");
@@ -189,7 +190,11 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
                     }}
                   />
                 ) : (
-                  "N/A"
+                  <img
+                                  src={pp}
+                                  alt="Default Profile"
+                                  style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                />
                 )}
               </td>
               <td>{investor.full_name || investor.name}</td>
@@ -224,7 +229,11 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
               className="profile-img"
             />
           ) : (
-            "N/A"
+           <img
+                           src={pp}
+                           alt="Default Profile"
+                           style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                         />
           )}
         </div>
         <div className="form-group">
@@ -240,7 +249,8 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Username:</label>
           <input
             type="text"
-            value={editingInvestor.username || ""}
+            value={editingInvestor.
+              name || ""}
             readOnly
             className="form-control"
           />
