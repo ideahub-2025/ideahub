@@ -10,20 +10,16 @@ export default function AdminLogin() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
-
-  // Submit handler for admin login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMessage("");
-
-    // Check if username and password are provided
+  
     if (!username || !password) {
       setError("Please enter both username and password.");
       return;
     }
-
-    // Make API call to the admin login endpoint
+  
     try {
       const response = await fetch("http://localhost:8000/api/admin_login/", {
         method: "POST",
@@ -32,12 +28,17 @@ export default function AdminLogin() {
         },
         body: JSON.stringify({ username, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
+        // ✅ Store the token in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
+        console.log("Token stored:", data.token); // Debugging
+  
         setSuccessMessage("Login successful! Redirecting...");
-        setTimeout(() => navigate('/admin-panel'), 500);
+        setTimeout(() => navigate("/admin-panel"), 500);
       } else {
         setError(data.error || "An unexpected error occurred. Please try again.");
       }
@@ -45,6 +46,8 @@ export default function AdminLogin() {
       setError("An error occurred during login. Please try again later.");
     }
   };
+  
+
 
   return (
     <div className="container">
