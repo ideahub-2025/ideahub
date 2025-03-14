@@ -16,25 +16,25 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
     const search = searchTerm.toLowerCase();
     const name = (investor.full_name || investor.name || "").toLowerCase();
     const email = investor.email ? investor.email.toLowerCase() : "";
-    const firm = (investor.firmName || investor.firm || "").toLowerCase();
+    const firm = (investor.firm_name || investor.firm || "").toLowerCase();
     const matchesSearch = name.includes(search) || email.includes(search) || firm.includes(search);
     return matchesFilter && matchesSearch;
   });
 
+
   // All status options shown in the dropdown.
-  const allStatusOptions = ["Verified", "Unverified", "Blocked", "Rejected"];
+  const allStatusOptions = ["Active","Verified", "Unverified", "Blocked", "Rejected"];
 
   // Allowed transitions:
   // - If the investor is Verified, only a change to Blocked is allowed.
   // - If the investor is Unverified, allowed changes are to Verified or Rejected.
   // - For Blocked or Rejected, only a change to Verified is allowed.
+  
   const getAllowedTransitions = (currentStatus) => {
     if (currentStatus === "Verified") {
       return ["Blocked"];
-    } else if (currentStatus === "Unverified") {
-      return ["Verified", "Rejected"];
     } else {
-      return ["Verified"];
+      return ["Verified", "Rejected"];
     }
   };
 
@@ -58,16 +58,51 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
       }
     }
   };
+  
+  const handleSaveInvestor = (id, updatedInvestor) => {
+    setInvestors((prevInvestors) =>
+      prevInvestors.map((inv) => (inv.id === id ? updatedInvestor : inv))
+    );
+  };
+  
 
   // Called when the admin confirms a valid update.
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     if (editingInvestor && confirmationType === "valid") {
-      const updatedInvestor = { ...editingInvestor, status: newStatus };
-      onSaveInvestor(updatedInvestor.id, updatedInvestor);
-      setEditingInvestor(null);
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/investors/${editingInvestor.id}/update-status/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+  
+        const result = await response.json();
+        console.log("Server response:", result);
+  
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+  
+        alert("Status updated successfully!");
+        
+        // ✅ Ensure onSaveInvestor is called correctly
+        if (typeof onSaveInvestor === "function") {
+          onSaveInvestor(editingInvestor.id, { ...editingInvestor, status: newStatus });
+        } else {
+          console.error("❌ onSaveInvestor function is missing!");
+        }
+  
+        // ✅ Ensure the modal closes
+        setShowConfirm(false);  // Close confirmation modal
+        setEditingInvestor(null);  // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
     }
-    setShowConfirm(false);
   };
+  
 
   // Called when the admin declines the update (or dismisses an invalid-change message).
   const declineStatusChange = () => {
@@ -199,7 +234,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
               </td>
               <td>{investor.full_name || investor.name}</td>
               <td>{investor.email}</td>
-              <td>{investor.firmName || investor.firm}</td>
+              <td>{investor.firm_name || investor.firm}</td>
               <td>{investor.status}</td>
               <td>
                 <button onClick={() => handleEditClick(investor)}>
@@ -249,8 +284,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Username:</label>
           <input
             type="text"
-            value={editingInvestor.
-              name || ""}
+            value={editingInvestor.username || ""}
             readOnly
             className="form-control"
           />
@@ -321,7 +355,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Firm Name:</label>
           <input
             type="text"
-            value={editingInvestor.firmName || editingInvestor.firm || ""}
+            value={editingInvestor.firm_name || ""}
             readOnly
             className="form-control"
           />
@@ -330,7 +364,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Investment Stage:</label>
           <input
             type="text"
-            value={editingInvestor.investmentStage || ""}
+            value={editingInvestor.investment_stage || ""}
             readOnly
             className="form-control"
           />
@@ -339,7 +373,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Portfolio Size:</label>
           <input
             type="text"
-            value={editingInvestor.portfolioSize || ""}
+            value={editingInvestor.portfolio_size || ""}
             readOnly
             className="form-control"
           />
@@ -357,7 +391,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Min Investment:</label>
           <input
             type="text"
-            value={editingInvestor.minInvestment || ""}
+            value={editingInvestor.min_investment || ""}
             readOnly
             className="form-control"
           />
@@ -366,7 +400,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Max Investment:</label>
           <input
             type="text"
-            value={editingInvestor.maxInvestment || ""}
+            value={editingInvestor.max_investment || ""}
             readOnly
             className="form-control"
           />
@@ -470,6 +504,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

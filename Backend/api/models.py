@@ -139,6 +139,7 @@ class Event(models.Model):
     date = models.DateTimeField()
     location = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title

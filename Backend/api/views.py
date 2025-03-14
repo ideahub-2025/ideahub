@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import serializers, viewsets,generics, permissions, status
 from django.contrib.auth.hashers import make_password
 from .models import UserProfile, Entrepreneur, Investor, AdminUser
-from .serializers import UserProfileSerializer, InvestorSerializer, Entrepreneur 
+from .serializers import UserProfileSerializer, InvestorSerializer, EntrepreneurSerializer
 import re
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -47,9 +47,9 @@ from .permissions import IsOwnerOrReadOnly
 
 from .models import Idea
 from .serializers import IdeaSerializer
-
 from .models import Idea
-
+from .serializers import InvestorStatusSerializer
+from .serializers import EntrepreneurStatusSerializer
 
 class UserProfileCreateView(APIView):
     permission_classes = [AllowAny]
@@ -101,15 +101,23 @@ class SignInView(APIView):
 
         try:
             user = UserProfile.objects.get(username=username)
+            # user_status=user.status
+            # print("STATUS",user_status)
             print("USER ##" ,user)
             print(f"Received Password: {password}")
             print(f"Stored Password: {user.password}")
-            
+            print("STATUS",user.status)
             print(f"Password Match: {check_password(password, user.password)}")
+            if str(user.role).strip().lower() =='entrepreneur':
+                if str(user.status).strip().lower()!="active":
+                    return Response({'error': 'Your account is inactive. Please contact the administrator for assistance.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+            if str(user.role).strip().lower() =='investor':
+                if str(user.status).strip().lower()!="active" or str(user.status).strip().lower()!="verified":
+                    return Response({'error': 'contact Admin'}, status=status.HTTP_401_UNAUTHORIZED)
             # Use check_password to verify the password
             if not check_password(password, user.password):
-                return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'Your account is inactive or not verified. Please contact the administrator for assistance.'}, status=status.HTTP_401_UNAUTHORIZED)
 
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
@@ -695,3 +703,135 @@ class get_user_details(APIView):
         # print(user_data)
 
         return Response({"status": True, "data": user_data}, status=status.HTTP_200_OK)
+        
+
+
+class UpdateAdminUserView(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # Open to all requests
+
+    def put(self, request):
+        try:
+            data = request.data
+            username = data.get("username")  # Ensure username is sent in the request
+            current_password = data.get("current_password")
+            new_password = data.get("new_password")
+
+            update_field_by_username("api_adminuser",username,update_data={"password": make_password(new_password)})
+            
+            return Response({"message": "Password updated successfully."}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UpdateInvestorStatusView(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # Open to all requests
+    def patch(self, request, pk):
+        investor = get_object_or_404(Investor, pk=pk)
+        serializer = InvestorStatusSerializer(investor, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            new_status = serializer.validated_data.get("status")
+
+            # Allowed transitions
+            allowed_transitions = {
+                
+                "Unverified": ["Verified", "Rejected"],
+                "Blocked": ["Verified"],
+                "Rejected": ["Verified"],
+                "Active":["Verified", "Rejected"],
+            }
+
+            if investor.status in allowed_transitions and new_status not in allowed_transitions[investor.status]:
+                return Response({"error": "Invalid status transition"}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.save()
+            try:
+                update_field_by_username(
+                                        "api_userprofile",
+                                        username=investor.username,
+                                        update_data={"status": new_status}
+                                    )
+            except:
+                pass
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateEntrepreneurStatusView(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # Open to all requests
+    print("ENTREPRENUER############")
+    def patch(self, request, pk):
+
+        entrepreneur = get_object_or_404(Entrepreneur, pk=pk)
+        print("USERNAME",entrepreneur.username)
+        serializer = EntrepreneurStatusSerializer(entrepreneur, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            new_status = serializer.validated_data.get("status")
+
+            # Allowed transitions
+            allowed_transitions = {
+                "Active": ["Inactive"],
+                "Inactive": ["Active"],
+            }
+
+            if entrepreneur.status in allowed_transitions and new_status not in allowed_transitions[entrepreneur.status]:
+                return Response({"error": "Invalid status transition"}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.save()
+            try:
+                update_field_by_username(
+                                        "api_userprofile",
+                                        username=entrepreneur.username,
+                                        update_data={"status": new_status}
+                                    )
+            except:
+                pass
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateEventView(generics.CreateAPIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # Open to all requests
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            event = serializer.save()
+            return Response(
+                {
+                    "message": "Event created successfully",
+                    "event": EventSerializer(event).data,  # Return formatted date
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateEventView(generics.UpdateAPIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # Open to all requests
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        
+        if serializer.is_valid():
+            event = serializer.save()
+            return Response(
+                {"message": "Event updated successfully", "event": EventSerializer(event).data},
+                status=status.HTTP_200_OK
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
