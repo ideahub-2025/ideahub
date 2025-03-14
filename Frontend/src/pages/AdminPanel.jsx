@@ -30,8 +30,6 @@ export default function AdminPanel() {
   }, []);
   
   
-  
-  
   console.log("Fetched Users:", users);
   // Fetch investors from Django API
   useEffect(() => {

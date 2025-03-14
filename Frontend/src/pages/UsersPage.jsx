@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png"; 
 import pp from "../assets/defaultpp.jpg";
+import { useCallback } from "react";
 const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [editingUser, setEditingUser] = useState(null);
@@ -26,7 +27,17 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const getAllowedTransitions = (currentStatus) => {
     return currentStatus === "Active" ? ["Inactive"] : ["Active"];
   };
+ 
+  const handleCloseModal = useCallback(() => {
+    setEditingUser(null);
+    setShowConfirm(false);
+  }, []);
 
+  const declineStatusChange = () => {
+    setShowConfirm(false);
+  };
+  
+  
   // When clicking Edit, open the modal and set default dropdown to the user’s current status.
   const handleEditClick = (user) => {
     setEditingUser(user);
@@ -48,22 +59,43 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
     }
   };
 
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     if (editingUser && confirmationType === "valid") {
-      const updatedUser = { ...editingUser, status: newStatus };
-      onSaveUser(updatedUser.id, updatedUser);
-      setEditingUser(null);
+      try {
+        const response = await fetch(`http://localhost:8000/api/entrepreneur/${editingUser.id}/update-status/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+  
+        const result = await response.json();
+        console.log("Server response:", result);
+  
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+  
+        alert("Status updated successfully!");
+        
+        // ✅ Ensure onSaveInvestor is called correctly
+        if (typeof onSaveUser === "function") {
+          onSaveUser(editingUser.id, { ...editingUser, status: newStatus });
+          handleCloseModal();
+        } else {
+          console.error("❌ onSaveUser function is missing!");
+        }
+  
+        // ✅ Ensure the modal closes
+        setShowConfirm(false);  // Close confirmation modal
+        setEditingUser(null);  // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
     }
-    setShowConfirm(false);
   };
-
-  const declineStatusChange = () => {
-    setShowConfirm(false);
-  };
-
-  const handleCloseModal = () => {
-    setEditingUser(null);
-  };
+  
 
   // Inline styles for modal popup.
   const modalOverlayStyle = {
