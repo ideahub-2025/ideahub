@@ -6,8 +6,8 @@ const CreateEvent = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [refresh, setRefresh] = useState(false);
 
+  const [refresh, setRefresh] = useState(false);
   // Form fields
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -38,6 +38,7 @@ const CreateEvent = () => {
     };
 
     fetchEvents();
+
   }, [refresh]);
 
   const triggerRefresh = () => setRefresh((prev) => !prev); // Toggle refresh to reload events
@@ -111,6 +112,8 @@ const CreateEvent = () => {
     });
     setShowConfirmModal(true);
   };
+  
+
 
   // Toggle active status with confirmation (works only when editing an event)
   const toggleActiveStatus = () => {
@@ -128,7 +131,7 @@ const CreateEvent = () => {
     });
     setShowConfirmModal(true);
   };
-
+  
   // Filter upcoming events: Only active events with date on or after today
   const todayDate = new Date();
   todayDate.setHours(0, 0, 0, 0);
@@ -138,6 +141,8 @@ const CreateEvent = () => {
   const sortedEvents = events.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
   // Take up to 4 of the upcoming events for the carousel
   const urgentEvents = upcomingEvents.slice(0, 4);
+
+   
 
   return (
     <div>
