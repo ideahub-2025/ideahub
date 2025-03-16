@@ -30,7 +30,7 @@ export default function EntHome() {
   const fileInputRef = useRef(null);
   const [trendingIdeas, setTrendingIdeas] = useState([]);
 
-  
+  const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [isIdeaDialogOpen, setIsIdeaDialogOpen] = useState(false);
   const [isSomeOtherDialogOpen, setIsSomeOtherDialogOpen] = useState(false);
   
