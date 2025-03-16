@@ -1,15 +1,16 @@
+from pymongo import MongoClient
+from django.conf import settings
+from pymongo.errors import PyMongoError
+from rest_framework.response import Response
+from rest_framework import status
 
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'ideahub_backend.settings'
-import django
-django.setup()
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
-# Then you can safely import Django models or anything else
-from rest_framework.authtoken.models import Token
+MONGO_CLIENT_URL="mongodb+srv://ideahub:idea123@cluster0.uw8l5.mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(MONGO_CLIENT_URL)  # Update with your MongoDB connection string
+db = client["ideahub"]
+collection = db["api_event"]
 
-# Replace 'username' with the actual username of the user
-user = User.objects.get(username='username')  
-token, created = Token.objects.get_or_create(user=user)
+# Add the 'status' field to all documents
+collection.update_many({}, {"$set": {"status": "Active"}})
 
-print(token.key)  # This is the generated token
+print("Status column added successfully!")
+
