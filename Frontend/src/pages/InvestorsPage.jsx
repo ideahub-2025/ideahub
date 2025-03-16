@@ -3,16 +3,21 @@ import logo from "../assets/logo.png";
 import pp from "../assets/defaultpp.jpg";
 
 const InvestorsPage = ({ investors, onSaveInvestor }) => {
+  // If no investors prop is provided, use sample data
+  const investorsData =
+    investors && investors.length > 0 ? investors : sampleInvestors;
+
   const [filterStatus, setFilterStatus] = useState("All");
-  const [searchTerm, setSearchTerm] = useState(""); // New search term state
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingInvestor, setEditingInvestor] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmationType, setConfirmationType] = useState(null); // "valid" or "invalid"
 
   // Filter investors based on both filterStatus and search term
-  const filteredInvestors = investors.filter((investor) => {
-    const matchesFilter = filterStatus === "All" || investor.status === filterStatus;
+  const filteredInvestors = investorsData.filter((investor) => {
+    const matchesFilter =
+      filterStatus === "All" || investor.status === filterStatus;
     const search = searchTerm.toLowerCase();
     const name = (investor.full_name || investor.name || "").toLowerCase();
     const email = investor.email ? investor.email.toLowerCase() : "";
@@ -21,7 +26,6 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
     return matchesFilter && matchesSearch;
   });
 
-
   // All status options shown in the dropdown.
   const allStatusOptions = ["Active","Verified", "Unverified", "Blocked", "Rejected"];
 
@@ -29,12 +33,13 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
   // - If the investor is Verified, only a change to Blocked is allowed.
   // - If the investor is Unverified, allowed changes are to Verified or Rejected.
   // - For Blocked or Rejected, only a change to Verified is allowed.
-  
   const getAllowedTransitions = (currentStatus) => {
     if (currentStatus === "Verified") {
       return ["Blocked"];
-    } else {
+    } else if (currentStatus === "Unverified") {
       return ["Verified", "Rejected"];
+    } else {
+      return ["Verified"];
     }
   };
 
@@ -58,16 +63,9 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
       }
     }
   };
-  
-  const handleSaveInvestor = (id, updatedInvestor) => {
-    setInvestors((prevInvestors) =>
-      prevInvestors.map((inv) => (inv.id === id ? updatedInvestor : inv))
-    );
-  };
-  
 
   // Called when the admin confirms a valid update.
-  const confirmStatusChange = async () => {
+  const confirmStatusChange = () => {
     if (editingInvestor && confirmationType === "valid") {
       try {
         const response = await fetch(`http://127.0.0.1:8000/api/investors/${editingInvestor.id}/update-status/`, {
@@ -104,7 +102,32 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
   };
   
 
-  // Called when the admin declines the update (or dismisses an invalid-change message).
+        const result = await response.json();
+        console.log("Server response:", result);
+
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+
+        alert("Status updated successfully!");
+
+        if (typeof onSaveInvestor === "function") {
+          onSaveInvestor(editingInvestor.id, { ...editingInvestor, status: newStatus });
+        } else {
+          console.error("onSaveInvestor function is missing!");
+        }
+
+        setShowConfirm(false); // Close confirmation modal
+        setEditingInvestor(null); // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
+    }
+  };
+
+  // Called when the admin declines the update.
   const declineStatusChange = () => {
     setShowConfirm(false);
   };
@@ -113,66 +136,12 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
     setEditingInvestor(null);
   };
 
-  // Inline styles for the main modal popup.
-  const modalOverlayStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  };
-
-  const modalStyle = {
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "5px",
-    width: "90%",
-    maxWidth: "600px",
-    maxHeight: "90vh",
-    overflowY: "auto",
-    position: "relative",
-  };
-
-  const logoStyle = {
-    width: "100px",
-    height: "auto",
-    marginBottom: "1rem",
-  };
-
-  // Styles for the confirmation popup modal.
-  const confirmModalOverlayStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1100,
-  };
-
-  const confirmModalStyle = {
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "5px",
-    width: "90%",
-    maxWidth: "400px",
-    textAlign: "center",
-  };
-
   return (
     <div>
       <h2>Investor Management</h2>
 
       {/* Search Input */}
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="search-container">
         <input
           type="text"
           placeholder="Search by Name, Email, or Firm"
@@ -183,7 +152,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
       </div>
 
       {/* Dropdown filter for status */}
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="filter-container">
         <label htmlFor="statusFilter">Filter by Status: </label>
         <select
           id="statusFilter"
@@ -218,11 +187,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
                   <img
                     src={investor.profile_picture}
                     alt="Profile"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      objectFit: "cover",
-                    }}
+                    className="profile-img-thumb"
                   />
                 ) : (
                   <img
@@ -234,12 +199,10 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
               </td>
               <td>{investor.full_name || investor.name}</td>
               <td>{investor.email}</td>
-              <td>{investor.firm_name || investor.firm}</td>
+              <td>{investor.firmName || investor.firm}</td>
               <td>{investor.status}</td>
               <td>
-                <button onClick={() => handleEditClick(investor)}>
-                  Edit
-                </button>
+                <button onClick={() => handleEditClick(investor)}>Edit</button>
               </td>
             </tr>
           ))}
@@ -480,15 +443,13 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
 
       {/* Confirmation Popup Modal */}
       {showConfirm && (
-        <div style={confirmModalOverlayStyle}>
-          <div style={confirmModalStyle}>
+        <div className="confirm-modal-overlay">
+          <div className="confirm-modal">
             {confirmationType === "valid" ? (
               <>
-                <p>
-                  Are you sure you want to change the status to "{newStatus}"?
-                </p>
+                <p>Are you sure you want to change the status to "{newStatus}"?</p>
                 <button onClick={confirmStatusChange}>Confirm</button>
-                <button onClick={declineStatusChange} style={{ marginLeft: "1rem" }}>
+                <button onClick={declineStatusChange} className="ml-1">
                   Decline
                 </button>
               </>
@@ -504,7 +465,6 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           </div>
         </div>
       )}
-      
     </div>
   );
 };
