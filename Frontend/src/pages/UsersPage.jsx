@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png"; 
+import pp from "../assets/defaultpp.jpg";
+import { useCallback } from "react";
 const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [editingUser, setEditingUser] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmationType, setConfirmationType] = useState(null); // "valid" or "invalid"
-
+  
   // Filter users based on search term and filter status.
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === "All" ? true : user.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
-
+  const filteredUsers = Array.isArray(users)
+  ? users.filter((user) => {
+      const matchesSearch = user.full_name?.toLowerCase().includes(searchTerm?.toLowerCase() || "");
+      const matchesFilter = filterStatus === "All" || user.status === filterStatus;
+      return matchesSearch && matchesFilter;
+    })
+  : [];
+    
   // All possible status options for users.
   const allStatusOptions = ["Active", "Inactive"];
 
@@ -23,7 +27,17 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const getAllowedTransitions = (currentStatus) => {
     return currentStatus === "Active" ? ["Inactive"] : ["Active"];
   };
+ 
+  const handleCloseModal = useCallback(() => {
+    setEditingUser(null);
+    setShowConfirm(false);
+  }, []);
 
+  const declineStatusChange = () => {
+    setShowConfirm(false);
+  };
+  
+  
   // When clicking Edit, open the modal and set default dropdown to the user’s current status.
   const handleEditClick = (user) => {
     setEditingUser(user);
@@ -45,22 +59,43 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
     }
   };
 
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     if (editingUser && confirmationType === "valid") {
-      const updatedUser = { ...editingUser, status: newStatus };
-      onSaveUser(updatedUser.id, updatedUser);
-      setEditingUser(null);
+      try {
+        const response = await fetch(`http://localhost:8000/api/entrepreneur/${editingUser.id}/update-status/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+  
+        const result = await response.json();
+        console.log("Server response:", result);
+  
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+  
+        alert("Status updated successfully!");
+        
+        // ✅ Ensure onSaveInvestor is called correctly
+        if (typeof onSaveUser === "function") {
+          onSaveUser(editingUser.id, { ...editingUser, status: newStatus });
+          handleCloseModal();
+        } else {
+          console.error("❌ onSaveUser function is missing!");
+        }
+  
+        // ✅ Ensure the modal closes
+        setShowConfirm(false);  // Close confirmation modal
+        setEditingUser(null);  // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
     }
-    setShowConfirm(false);
   };
-
-  const declineStatusChange = () => {
-    setShowConfirm(false);
-  };
-
-  const handleCloseModal = () => {
-    setEditingUser(null);
-  };
+  
 
   // Inline styles for modal popup.
   const modalOverlayStyle = {
@@ -162,17 +197,22 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
             <tr key={user.id}>
               <td>{user.id}</td>
               <td>
-                {user.photo ? (
-                  <img
-                    src={user.photo}
-                    alt="User"
-                    style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                  />
-                ) : (
-                  "N/A"
-                )}
+              {user?.profile_picture ? (
+  <img
+    src={user.profile_picture.startsWith("http") ? user.profile_picture : `http://localhost:8000/media/${user.profile_picture}`}
+    alt="Profile"
+    style={{ width: "50px", height: "50px", objectFit: "cover" }}
+  />
+) : (
+  <img
+    src={pp}
+    alt="Default Profile"
+    style={{ width: "50px", height: "50px", objectFit: "cover" }}
+  />
+)}
+
               </td>
-              <td>{user.name}</td>
+              <td>{user.full_name}</td>
               <td>{user.email}</td>
               <td>{user.status}</td>
               <td>
@@ -194,17 +234,22 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
       <form>
         <div className="form-group">
           <label>Photo:</label>
-          {editingUser.photo ? (
-            <img src={editingUser.photo} alt="User" className="profile-img" />
-          ) : (
-            "N/A"
-          )}
+          {editingUser.profile_picture ? (
+  <img src={`http://localhost:8000/media/${editingUser.profile_picture}`} alt="User" className="profile-img" />
+) : (
+  <img
+                src={pp}
+                alt="Default Profile"
+                style={{ width: "50px", height: "50px", objectFit: "cover" }}
+              />
+)}
+
         </div>
         <div className="form-group">
           <label>Name:</label>
           <input
             type="text"
-            value={editingUser.name || ""}
+            value={editingUser.full_name || ""}
             readOnly
             className="form-control"
           />
@@ -222,7 +267,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Role:</label>
           <input
             type="text"
-            value={editingUser.role || ""}
+            value={editingUser.job_role || ""}
             readOnly
             className="form-control"
           />
@@ -275,7 +320,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Startup Name:</label>
           <input
             type="text"
-            value={editingUser.startupName || ""}
+            value={editingUser.startup_name || ""}
             readOnly
             className="form-control"
           />
@@ -284,7 +329,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Start Date:</label>
           <input
             type="text"
-            value={editingUser.startDate || ""}
+            value={editingUser.start_date || ""}
             readOnly
             className="form-control"
           />
@@ -293,7 +338,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
           <label>Team Size:</label>
           <input
             type="text"
-            value={editingUser.teamSize || ""}
+            value={editingUser.team_size || ""}
             readOnly
             className="form-control"
           />

@@ -1,6 +1,8 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from .models import UserProfile, Investor  # Ensure the correct import
+from .models import UserProfile, Investor, Entrepreneur # Ensure the correct import
+from .models import Event
+from .models import Idea
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,3 +23,38 @@ class InvestorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Investor
         fields = '__all__'  # Ensure all necessary fields are included
+
+class EntrepreneurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entrepreneur
+        fields = '__all__'
+
+
+
+
+class EventSerializer(serializers.ModelSerializer):
+    formatted_date = serializers.SerializerMethodField()
+
+    def get_formatted_date(self, obj):
+        return obj.date.strftime("%B %d, %Y")  # Example: "May 15, 2025"
+
+    class Meta:
+        model = Event
+        fields = '__all__'
+
+
+class IdeaSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()  
+    class Meta:
+        model = Idea
+        fields = '__all__'  
+
+class InvestorStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Investor
+        fields = ['status']
+
+class EntrepreneurStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entrepreneur
+        fields = ['status']
