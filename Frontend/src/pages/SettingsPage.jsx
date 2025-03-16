@@ -17,14 +17,17 @@ export default function SettingsPage() {
     }
   
     const payload = {
-      username: username, // ✅ Ensure username is sent in the request
+
+      username: username, // Ensure username is sent in the request
       current_password: currentPassword,
       new_password: newPassword,
     };
   
     try {
       const response = await axios.put("http://localhost:8000/api/update-admin-user/", payload, {
-        headers: { "Content-Type": "application/json" }, // No authentication required
+
+        headers: { "Content-Type": "application/json" },
+
       });
   
       alert(response.data.message);
@@ -34,7 +37,6 @@ export default function SettingsPage() {
       alert(error.response?.data?.error || "An error occurred");
     }
   };
-  
 
   return (
     <div className="settings-container">
@@ -50,27 +52,38 @@ export default function SettingsPage() {
         {/* Password Update Section */}
         <div className="settings-section">
           <h3>Update Password</h3>
-          <button className="btn-primary" onClick={() => setShowPasswordModal(true)}>Change Password</button>
+          <button className="btn-primary" onClick={() => setShowPasswordModal(true)}>
+            Change Password
+          </button>
         </div>
         
         {showPasswordModal && (
-          <div className="modal">
-            <h3>Change Password</h3>
-            <input
-              type="password"
-              placeholder="Current Password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <div className="modal-actions">
-              <button className="btn-primary" onClick={handleUpdate}>Save Changes</button>
-              <button className="btn-secondary" onClick={() => setShowPasswordModal(false)}>Cancel</button>
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>Change Password</h3>
+              <input
+                type="password"
+                placeholder="Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="form-control"
+              />
+              <input
+                type="password"
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="form-control"
+              />
+              <div className="modal-actions">
+                <button className="btn-primary" onClick={handleUpdate}>
+                  Save Changes
+                </button>
+                <button className="btn-secondary" onClick={() => setShowPasswordModal(false)}>
+                  Cancel
+                </button>
+              </div>
+
             </div>
           </div>
         )}
@@ -78,3 +91,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

@@ -6,16 +6,17 @@ const CreateEvent = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [refresh, setRefresh] = useState(false)
+
+  const [refresh, setRefresh] = useState(false);
   // Form fields
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
-  
+
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   // For confirmation and success modals
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmModalMessage, setConfirmModalMessage] = useState("");
@@ -37,8 +38,10 @@ const CreateEvent = () => {
     };
 
     fetchEvents();
-  },[refresh] );
-  const triggerRefresh = () => setRefresh((prev) => !prev); // Toggles refresh to reload events
+
+  }, [refresh]);
+
+  const triggerRefresh = () => setRefresh((prev) => !prev); // Toggle refresh to reload events
 
   const openModal = (event = null) => {
     setEditingEvent(event);
@@ -83,21 +86,21 @@ const CreateEvent = () => {
         const url = editingEvent
           ? `http://localhost:8000/api/events/${editingEvent.id}/update/`
           : "http://localhost:8000/api/events/create/";
-  
+
         const method = editingEvent ? "PATCH" : "POST";
-  
+
         const response = await fetch(url, {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title, date, location, description }),
         });
-  
+
         const result = await response.json();
         if (!response.ok) {
           setErrorMessage(result.error || "Failed to save event.");
           return;
         }
-  
+
         setSuccessMessage(editingEvent ? "Event updated successfully!" : "Event created successfully!");
         setShowSuccessModal(true);
         triggerRefresh(); // Refresh events after saving
@@ -130,9 +133,9 @@ const CreateEvent = () => {
   };
   
   // Filter upcoming events: Only active events with date on or after today
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const upcomingEvents = events.filter(ev => ev.isActive && new Date(ev.date) >= today);
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const upcomingEvents = events.filter(ev => ev.isActive && new Date(ev.date) >= todayDate);
 
   // Sort events by date (soonest first)
   const sortedEvents = events.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -199,7 +202,6 @@ const CreateEvent = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
-            {/* Logo header similar to post page forms */}
             <div className="form-header">
               <img src={logo} alt="Company Logo" className="logo" />
             </div>
@@ -209,29 +211,32 @@ const CreateEvent = () => {
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="form-control"
             />
             <input
               type="date"
               placeholder="Date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              className="form-control"
             />
             <input
               type="text"
               placeholder="Location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              className="form-control"
             />
             <textarea
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className="form-control"
             ></textarea>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button className="modal-button" onClick={handleSave}>
               Save
             </button>
-            {/* Toggle button for editing an event */}
             {editingEvent && (
               <button className="modal-button" onClick={toggleActiveStatus}>
                 {isActive ? "Mark as Inactive" : "Mark as Active"}

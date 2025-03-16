@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png"; 
+import "../App.css";
+
+
 const PostsPage = ({ posts, users, onSavePost, searchTerm, onSearchChange }) => {
   const [editingPost, setEditingPost] = useState(null);
   const [newStatus, setNewStatus] = useState("");
@@ -36,7 +39,8 @@ const PostsPage = ({ posts, users, onSavePost, searchTerm, onSearchChange }) => 
   return (
     <div>
       <h2>Posts Management</h2>
-      <div style={{ marginBottom: "1rem" }}>
+      {/* Search Input */}
+      <div className="search-container">
         <input
           type="text"
           placeholder="Search by Link or Text..."
@@ -77,9 +81,9 @@ const PostsPage = ({ posts, users, onSavePost, searchTerm, onSearchChange }) => 
       {editingPost && (
         <div className="modal-overlay">
           <div className="modal">
-              <div className="form-header">
-                <img src={logo} alt="Company Logo" className="logo" />
-              </div>
+            <div className="form-header">
+              <img src={logo} alt="Company Logo" className="logo" />
+            </div>
             <h3>Edit Post Status</h3>
             <p>
               <strong>Link: </strong>
@@ -148,7 +152,5 @@ const PostsPage = ({ posts, users, onSavePost, searchTerm, onSearchChange }) => 
     </div>
   );
 };
-
-
 
 export default PostsPage;
