@@ -1,18 +1,22 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
-import axios from "axios";
-import { Camera, Phone, Linkedin, Twitter } from "lucide-react";
-import "../App.css";
+"use client"
 
-export default function UserForm() {
-  const { state } = useLocation(); // Get the passed state
-  const { username, fullName, role, email } = state || {}; // Destructure the state
+import { useLocation, useNavigate } from "react-router-dom"
+import { useState, useRef } from "react"
+import axios from "axios"
+import { Camera, Phone, Linkedin, Twitter } from "lucide-react"
+import "../App.css"
 
-  // Use this data as needed
-  console.log(username, fullName, role, email);
+export default function ProfileEdit() {
+  const { state } = useLocation() // Get the passed state
+  const { username, fullName, role, email } = state || {
+    username: "alexjohnson",
+    fullName: "Alex Johnson",
+    role: "Tech Entrepreneur",
+    email: "alex@example.com",
+  } // Destructure the state with defaults
 
   const [formData, setFormData] = useState({
-    job_role: "",
+    role: role || "",
     location: "",
     bio: "",
     phone: "",
@@ -22,42 +26,42 @@ export default function UserForm() {
     startDate: "",
     teamSize: "",
     website: "",
-  });
+  })
 
-  const [charCount, setCharCount] = useState(0);
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const fileInputRef = useRef(null);
+  const [charCount, setCharCount] = useState(0)
+  const [photoPreview, setPhotoPreview] = useState(null)
+  const fileInputRef = useRef(null)
 
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate() // Hook for navigation
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
+    }))
 
     if (name === "bio") {
-      setCharCount(value.length);
+      setCharCount(value.length)
     }
-  };
+  }
 
   const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = (e) => {
-        setPhotoPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
+        setPhotoPreview(e.target.result)
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     // Prepare form data for submission
     const dataToSubmit = {
@@ -66,73 +70,90 @@ export default function UserForm() {
       fullName,
       email,
       photo: photoPreview, // You might want to send the base64 image or a file URL
-    };
+    }
 
     try {
-      // Make the API call to register the user
-      const response = await axios.post("http://localhost:8000/api/create_entrepreneur_profile/", dataToSubmit,{
-        headers: {
-          'Content-Type': 'application/json',
+      // Make the API call to update the user profile
+      const response = await axios.put(
+        `http://localhost:8000/api/update_entrepreneur_profile/${username}/`,
+        dataToSubmit,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      )
 
-      if (response.status === 200 || response.status === 201) {
-        setSuccessMessage("Profile successfully created! Redirecting to homepage...");
-        setErrorMessage(null);
+      if (response.status === 200) {
+        setSuccessMessage("Profile successfully updated! Redirecting to dashboard...")
+        setErrorMessage(null)
 
-        // Redirect to homepage after 3 seconds
+        // Redirect to dashboard after 2 seconds
         setTimeout(() => {
-          navigate("/");
-        }, 1000);
+          navigate("/dashboard")
+        }, 2000)
       } else {
-        throw new Error("An error occurred during registration.");
+        throw new Error("An error occurred during profile update.")
       }
     } catch (error) {
-      setErrorMessage("There was an issue with the registration. Please try again later.");
-      setSuccessMessage(null);
+      setErrorMessage("There was an issue updating your profile. Please try again later.")
+      setSuccessMessage(null)
     }
-  };
+  }
 
   return (
-    <div className="userform-container">
-      <div className="userform-header">
-        <h1>👋 Welcome! Let's Build Your Profile</h1>
-        <p>Help investors get to know you and your startup better</p>
+    <div className="edit-profile-container">
+      <div className="edit-profile-header">
+        <h1>✏️ Edit Your Profile</h1>
       </div>
 
       {successMessage && (
-        <div className="success-message">
+        <div className="edit-success-message">
           <p>{successMessage}</p>
         </div>
       )}
 
       {errorMessage && (
-        <div className="error-message">
+        <div className="edit-error-message">
           <p>{errorMessage}</p>
         </div>
       )}
 
-      <form className="userform" onSubmit={handleSubmit}>
+      <form className="edit-profile-form" onSubmit={handleSubmit}>
         {/* About You Section */}
-        <div className="form-section">
-          <div className="section-header">
+        <div className="edit-form-section">
+          <div className="edit-section-header">
             <h2>🎯 About You</h2>
             <p>Tell us about the amazing person behind the startup</p>
           </div>
 
-          <div className="form-grid">
-            <div className="form-group">
+          <div className="edit-form-grid">
+            <div className="edit-form-group">
+              <label>Full Name</label>
+              <input type="text" value={fullName} disabled className="edit-disabled-input" />
+              <span className="edit-input-note">Name cannot be changed</span>
+            </div>
+
+            <div className="edit-form-group">
+              <label>Email Address</label>
+              <input type="email" value={email} disabled className="edit-disabled-input" />
+              <span className="edit-input-note">Email cannot be changed</span>
+            </div>
+          </div>
+
+          <div className="edit-form-grid">
+            <div className="edit-form-group">
               <label>What's your role?</label>
               <input
                 type="text"
                 name="role"
-                value={formData.job_role}
+                value={formData.role}
                 onChange={handleInputChange}
                 placeholder="e.g., CEO & Co-Founder"
               />
             </div>
 
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Where are you based?</label>
               <input
                 type="text"
@@ -144,33 +165,21 @@ export default function UserForm() {
             </div>
           </div>
 
-          <div className="form-grid">
-            <div className="form-group">
-              <label>Add your photo</label>
-              <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
+          <div className="edit-form-grid">
+            <div className="edit-form-group">
+              <label>Profile Photo</label>
+              <div className="edit-upload-zone" onClick={() => fileInputRef.current?.click()}>
                 {photoPreview ? (
-                  <div
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      margin: "0 auto",
-                      borderRadius: "50%",
-                      overflow: "hidden",
-                    }}
-                  >
+                  <div className="edit-photo-preview">
                     <img
                       src={photoPreview || "/placeholder.svg"}
-                      alt="Preview"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
+                      alt="Profile Preview"
+                      className="edit-preview-image"
                     />
                   </div>
                 ) : (
                   <>
-                    <Camera className="upload-icon" />
+                    <Camera className="edit-upload-icon" />
                     <span>Drop your photo here or click to browse</span>
                   </>
                 )}
@@ -178,14 +187,14 @@ export default function UserForm() {
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  className="file-input"
+                  className="edit-file-input"
                   onChange={handlePhotoUpload}
                 />
               </div>
             </div>
           </div>
 
-          <div className="form-group full-width">
+          <div className="edit-form-group full-width">
             <label>Your Bio</label>
             <textarea
               name="bio"
@@ -194,16 +203,16 @@ export default function UserForm() {
               placeholder="Share your journey, experience, and what drives you..."
               maxLength={500}
             ></textarea>
-            <div className="char-count">{charCount}/500 characters</div>
+            <div className="edit-char-count">{charCount}/500 characters</div>
           </div>
 
           {/* Social Links Section */}
-          <div className="social-links-section">
+          <div className="edit-social-links-section">
             <h3>Connect With Me</h3>
-            <div className="social-links-grid">
-              <div className="form-group">
-                <label className="icon-label">
-                  <Phone className="input-icon" />
+            <div className="edit-social-links-grid">
+              <div className="edit-form-group">
+                <label className="edit-icon-label">
+                  <Phone className="edit-input-icon" />
                   Phone
                 </label>
                 <input
@@ -215,9 +224,9 @@ export default function UserForm() {
                 />
               </div>
 
-              <div className="form-group">
-                <label className="icon-label">
-                  <Linkedin className="input-icon" />
+              <div className="edit-form-group">
+                <label className="edit-icon-label">
+                  <Linkedin className="edit-input-icon" />
                   LinkedIn
                 </label>
                 <input
@@ -229,9 +238,9 @@ export default function UserForm() {
                 />
               </div>
 
-              <div className="form-group">
-                <label className="icon-label">
-                  <Twitter className="input-icon" />
+              <div className="edit-form-group">
+                <label className="edit-icon-label">
+                  <Twitter className="edit-input-icon" />
                   Twitter/X
                 </label>
                 <input
@@ -247,17 +256,15 @@ export default function UserForm() {
         </div>
 
         {/* Startup Section */}
-        <div className="form-section">
-          <div className="section-header">
+        <div className="edit-form-section">
+          <div className="edit-section-header">
             <h2>🚀 Your Startup</h2>
             <p>Tell us about the company you're building</p>
           </div>
 
-          <div className="form-grid">
-            <div className="form-group">
-              <label>
-                Startup name
-              </label>
+          <div className="edit-form-grid">
+            <div className="edit-form-group">
+              <label>Startup name</label>
               <input
                 type="text"
                 name="startupName"
@@ -267,14 +274,14 @@ export default function UserForm() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>When did you start?</label>
               <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} />
             </div>
           </div>
 
-          <div className="form-grid">
-            <div className="form-group">
+          <div className="edit-form-grid">
+            <div className="edit-form-group">
               <label>Current team size</label>
               <input
                 type="number"
@@ -286,7 +293,7 @@ export default function UserForm() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Company website</label>
               <input
                 type="url"
@@ -299,12 +306,16 @@ export default function UserForm() {
           </div>
         </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-primary">
-            Complete Profile
+        <div className="edit-form-actions">
+          <button type="button" className="edit-btn-secondary" onClick={() => navigate("/dashboard")}>
+            Cancel
+          </button>
+          <button type="submit" className="edit-btn-primary">
+            Save Changes
           </button>
         </div>
       </form>
     </div>
-  );
+  )
 }
+

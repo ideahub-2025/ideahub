@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../App.css";
 import logo from "../assets/logo.png";
 
@@ -6,7 +6,7 @@ const CreateEvent = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-  
+  const [refresh, setRefresh] = useState(false)
   // Form fields
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -22,6 +22,23 @@ const CreateEvent = () => {
   const [onConfirmCallback, setOnConfirmCallback] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/events/upcoming/`);
+        if (!response.ok) throw new Error("Failed to fetch events");
+
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchEvents();
+  },[refresh] );
+  const triggerRefresh = () => setRefresh((prev) => !prev); // Toggles refresh to reload events
 
   const openModal = (event = null) => {
     setEditingEvent(event);
@@ -49,12 +66,10 @@ const CreateEvent = () => {
   };
 
   const handleSave = () => {
-    // Validate all fields are filled
     if (!title.trim() || !date.trim() || !location.trim() || !description.trim()) {
       setErrorMessage("All fields are mandatory.");
       return;
     }
-    // Validate date: cannot be before today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const eventDate = new Date(date);
@@ -62,35 +77,40 @@ const CreateEvent = () => {
       setErrorMessage("The event date cannot be before today.");
       return;
     }
-    // Set up confirmation modal for saving changes
     setConfirmModalMessage("Are you sure you want to confirm these changes?");
-    setOnConfirmCallback(() => () => {
-      if (editingEvent) {
-        const updatedEvents = events.map(ev =>
-          ev.id === editingEvent.id
-            ? { ...editingEvent, title, date, location, description, isActive }
-            : ev
-        );
-        setEvents(updatedEvents);
-        setSuccessMessage("Event updated successfully!");
-      } else {
-        const newEvent = {
-          id: Date.now(),
-          title,
-          date,
-          location,
-          description,
-          isActive: true,
-        };
-        setEvents([...events, newEvent]);
-        setSuccessMessage("Event created successfully!");
+    setOnConfirmCallback(() => async () => {
+      try {
+        const url = editingEvent
+          ? `http://localhost:8000/api/events/${editingEvent.id}/update/`
+          : "http://localhost:8000/api/events/create/";
+  
+        const method = editingEvent ? "PATCH" : "POST";
+  
+        const response = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, date, location, description }),
+        });
+  
+        const result = await response.json();
+        if (!response.ok) {
+          setErrorMessage(result.error || "Failed to save event.");
+          return;
+        }
+  
+        setSuccessMessage(editingEvent ? "Event updated successfully!" : "Event created successfully!");
+        setShowSuccessModal(true);
+        triggerRefresh(); // Refresh events after saving
+        closeModal();
+      } catch (error) {
+        setErrorMessage("An error occurred while saving the event.");
       }
       setShowConfirmModal(false);
-      closeModal();
-      setShowSuccessModal(true);
     });
     setShowConfirmModal(true);
   };
+  
+
 
   // Toggle active status with confirmation (works only when editing an event)
   const toggleActiveStatus = () => {
@@ -108,7 +128,7 @@ const CreateEvent = () => {
     });
     setShowConfirmModal(true);
   };
-
+  
   // Filter upcoming events: Only active events with date on or after today
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -118,6 +138,8 @@ const CreateEvent = () => {
   const sortedEvents = events.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
   // Take up to 4 of the upcoming events for the carousel
   const urgentEvents = upcomingEvents.slice(0, 4);
+
+   
 
   return (
     <div>
