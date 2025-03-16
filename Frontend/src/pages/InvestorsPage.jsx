@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
 import pp from "../assets/defaultpp.jpg";
+
 import "../App.css";
 
 // Sample data for demonstration
@@ -73,10 +74,11 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
     const name = (investor.full_name || investor.name || "").toLowerCase();
     const email = investor.email ? investor.email.toLowerCase() : "";
     const firm = (investor.firm_name || investor.firm || "").toLowerCase();
-    const matchesSearch =
-      name.includes(search) || email.includes(search) || firm.includes(search);
+
+    const matchesSearch =  name.includes(search) || email.includes(search) || firm.includes(search);
     return matchesFilter && matchesSearch;
   });
+
 
   // All status options shown in the dropdown.
   const allStatusOptions = ["Active", "Verified", "Unverified", "Blocked", "Rejected"];
@@ -85,6 +87,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
   // - If the investor is Verified, only a change to Blocked is allowed.
   // - If the investor is Unverified, allowed changes are to Verified or Rejected.
   // - For Blocked or Rejected, only a change to Verified is allowed.
+  
   const getAllowedTransitions = (currentStatus) => {
     if (currentStatus === "Verified") {
       return ["Blocked"];
@@ -113,19 +116,52 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
       }
     }
   };
+  
+  const handleSaveInvestor = (id, updatedInvestor) => {
+    setInvestors((prevInvestors) =>
+      prevInvestors.map((inv) => (inv.id === id ? updatedInvestor : inv))
+    );
+  };
+  
 
   // Called when the admin confirms a valid update.
   const confirmStatusChange = async () => {
     if (editingInvestor && confirmationType === "valid") {
       try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/investors/${editingInvestor.id}/update-status/`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: newStatus }),
-          }
-        );
+
+        const response = await fetch(`http://127.0.0.1:8000/api/investors/${editingInvestor.id}/update-status/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+  
+        const result = await response.json();
+        console.log("Server response:", result);
+  
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+  
+        alert("Status updated successfully!");
+        
+        // ✅ Ensure onSaveInvestor is called correctly
+        if (typeof onSaveInvestor === "function") {
+          onSaveInvestor(editingInvestor.id, { ...editingInvestor, status: newStatus });
+        } else {
+          console.error("❌ onSaveInvestor function is missing!");
+        }
+  
+        // ✅ Ensure the modal closes
+        setShowConfirm(false);  // Close confirmation modal
+        setEditingInvestor(null);  // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
+    }
+  };
+ 
 
         const result = await response.json();
         console.log("Server response:", result);
@@ -216,6 +252,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
                   />
                 ) : (
                   <img
+
                     src={pp}
                     alt="Default Profile"
                     className="profile-img-thumb"
@@ -236,6 +273,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
 
       {/* Edit Modal Popup */}
       {editingInvestor && (
+
         <div className="modal-overlay">
           <div className="modal">
             <div className="form-header">
@@ -486,6 +524,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

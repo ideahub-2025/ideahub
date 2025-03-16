@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import logo from "../assets/logo.png"; 
 import pp from "../assets/defaultpp.jpg";
+
 import "../App.css";
 
 // Sample users for demonstration purposes.
@@ -41,6 +42,7 @@ const sampleUsers = [
   },
 ];
 
+
 const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   // Use provided users prop if available, otherwise fallback to sampleUsers.
   const usersData = Array.isArray(users) && users.length > 0 ? users : sampleUsers;
@@ -50,15 +52,17 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const [newStatus, setNewStatus] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmationType, setConfirmationType] = useState(null); // "valid" or "invalid"
-
+  
   // Filter users based on search term and filter status.
-  const filteredUsers = usersData.filter((user) => {
-    const matchesSearch = user.full_name
-      ? user.full_name.toLowerCase().includes((searchTerm || "").toLowerCase())
-      : false;
-    const matchesFilter = filterStatus === "All" || user.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+
+  const filteredUsers = Array.isArray(users)
+  ? users.filter((user) => {
+      const matchesSearch = user.full_name?.toLowerCase().includes(searchTerm?.toLowerCase() || "");
+      const matchesFilter = filterStatus === "All" || user.status === filterStatus;
+      return matchesSearch && matchesFilter;
+    })
+  : [];
+    
 
   // All possible status options for users.
   const allStatusOptions = ["Active", "Inactive"];
@@ -69,7 +73,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const getAllowedTransitions = (currentStatus) => {
     return currentStatus === "Active" ? ["Inactive"] : ["Active"];
   };
-
+ 
   const handleCloseModal = useCallback(() => {
     setEditingUser(null);
     setShowConfirm(false);
@@ -78,7 +82,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const declineStatusChange = () => {
     setShowConfirm(false);
   };
-
+  
   // When clicking Edit, open the modal and set default dropdown to the user’s current status.
   const handleEditClick = (user) => {
     setEditingUser(user);
@@ -103,22 +107,41 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
   const confirmStatusChange = async () => {
     if (editingUser && confirmationType === "valid") {
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/entrepreneur/${editingUser.id}/update-status/`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: newStatus }),
-          }
-        );
 
+        const response = await fetch(`http://localhost:8000/api/entrepreneur/${editingUser.id}/update-status/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+  
         const result = await response.json();
         console.log("Server response:", result);
-
+  
         if (!response.ok) {
           alert("Error: " + (result.error || "Failed to update status"));
           return;
         }
+  
+        alert("Status updated successfully!");
+        
+        // ✅ Ensure onSaveInvestor is called correctly
+        if (typeof onSaveUser === "function") {
+          onSaveUser(editingUser.id, { ...editingUser, status: newStatus });
+          handleCloseModal();
+        } else {
+          console.error("❌ onSaveUser function is missing!");
+        }
+  
+        // ✅ Ensure the modal closes
+        setShowConfirm(false);  // Close confirmation modal
+        setEditingUser(null);  // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
+    }
+  };
+  
 
         alert("Status updated successfully!");
 
@@ -184,6 +207,7 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
             <tr key={user.id}>
               <td>{user.id}</td>
               <td>
+
                 {user?.profile_picture ? (
                   <img
                     src={

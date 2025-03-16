@@ -17,6 +17,7 @@ export default function SettingsPage() {
     }
   
     const payload = {
+
       username: username, // Ensure username is sent in the request
       current_password: currentPassword,
       new_password: newPassword,
@@ -24,7 +25,9 @@ export default function SettingsPage() {
   
     try {
       const response = await axios.put("http://localhost:8000/api/update-admin-user/", payload, {
+
         headers: { "Content-Type": "application/json" },
+
       });
   
       alert(response.data.message);
@@ -34,7 +37,7 @@ export default function SettingsPage() {
       alert(error.response?.data?.error || "An error occurred");
     }
   };
-  
+
   return (
     <div className="settings-container">
       <div className="settings-card">
@@ -80,6 +83,7 @@ export default function SettingsPage() {
                   Cancel
                 </button>
               </div>
+
             </div>
           </div>
         )}
@@ -87,3 +91,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+
