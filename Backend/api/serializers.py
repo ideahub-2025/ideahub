@@ -49,3 +49,12 @@ class IdeaSerializer(serializers.ModelSerializer):
         model = Idea
         fields = '__all__'  
 
+class InvestorStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Investor
+        fields = ['status']
+
+class EntrepreneurStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entrepreneur
+        fields = ['status']
