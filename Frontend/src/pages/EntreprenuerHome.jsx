@@ -430,7 +430,8 @@ export default function EntHome() {
             <button className="engagementButton">
               <ThumbsUp /> {trend_idea.like_count || 0} {/* Ensure like count is displayed */}
             </button>
-            <button className="engagementButton">
+            <button className="engagementButton"
+            onClick={() => setIsCommentDialogOpen(true)} >
               <MessageSquare /> {Array.isArray(trend_idea.comments) ? trend_idea.comments.length : 0} {/* Handle comments safely */}
             </button>
           </div>
@@ -484,7 +485,8 @@ export default function EntHome() {
               <ThumbsUp />
               {idea.like_count || 0}  {/* Ensure likes count is displayed */}
             </button>
-            <button className="engagementButton">
+            <button className="engagementButton"
+            onClick={() => setIsCommentDialogOpen(true)}>
               <MessageSquare />
               {idea.comments ? idea.comments.length : 0} {/* Show comment count */}
             </button>
