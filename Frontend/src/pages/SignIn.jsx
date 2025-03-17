@@ -8,14 +8,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role === "entrepreneur") {
-      navigate("/ent-home", { replace: true });
-    } else if (role === "investor") {
-      navigate("/investor-dashboard", { replace: true });
-    }
-  }, [navigate]);
+
 
   const goToRegister = () => navigate("/register");
   const goToReset = () => navigate("/reset-password");
@@ -56,7 +49,7 @@ export default function AuthPage() {
           if (response.data.role === "entrepreneur") {
             navigate("/ent-home", { replace: true });
           } else if (response.data.role === "investor") {
-            navigate("/investor-dashboard", { replace: true });
+            navigate("/investors", { replace: true });
           }
         }, 500);
       } else {

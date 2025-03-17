@@ -30,7 +30,7 @@ export default function EntHome() {
   const fileInputRef = useRef(null);
   const [trendingIdeas, setTrendingIdeas] = useState([]);
 
-  
+  const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [isIdeaDialogOpen, setIsIdeaDialogOpen] = useState(false);
   const [isSomeOtherDialogOpen, setIsSomeOtherDialogOpen] = useState(false);
   
@@ -413,8 +413,6 @@ export default function EntHome() {
             alt={trend_idea.username || "Unknown Author"}
             onError={(e) => (e.target.src = "pp")} // ✅ Prevent broken images
           />
-          
-
 
               </div>
               <span className="authorName">{trend_idea.username || "Anonymous"}</span>
