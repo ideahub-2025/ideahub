@@ -3522,3 +3522,207 @@ button:hover {
   }
 }
 
+/* GlobalStyles.css */
+
+/* --- Modal and Confirmation Styles --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* Remove horizontal scroll */
+  position: relative;
+}
+
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  overflow-x: hidden;
+}
+
+.confirm-modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+/* --- Button Styles --- */
+.btn,
+.modal-button {
+  padding: 8px 12px;
+  border: none;
+  background: #ffa500;  /* Uniform orange color */
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+/* Use the same uniform style for primary/secondary buttons */
+.btn-primary,
+.btn-secondary {
+  background: #ffa500;
+}
+
+/* --- Button Hover Effects --- */
+.btn:hover,
+.modal-button:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+  background-color: #e68a00; /* Darker orange on hover */
+}
+
+/* --- Form and Input Styles --- */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Read-only inputs/textareas get a light gray background */
+input[readonly],
+textarea[readonly] {
+  background-color: #f0f0f0;
+}
+
+.form-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+/* Center all form header content */
+.form-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* --- Logo Style: Center logo in forms and modals --- */
+.logo {
+  display: block;
+  margin: 0 auto 1rem auto;
+}
+
+/* --- Table and Image Styles --- */
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.responsive-table th,
+.responsive-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+/* Table row hover effect */
+.responsive-table tbody tr:hover {
+  background-color: #d0d0d0; /* Darker grey for better contrast */
+}
+
+
+.profile-img-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.profile-img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.document-link {
+  color: #ffa500;
+  text-decoration: none;
+}
+
+/* --- Containers --- */
+.search-container,
+.filter-container {
+  margin-bottom: 1rem;
+}
+
+/* --- Settings Page Specific Styles --- */
+.settings-page {
+  padding: 20px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  margin-bottom: 1rem;
+}
+
+.settings-display {
+  margin-bottom: 1.5rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.logout-section {
+  margin-top: 2rem;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+}
+
+/* --- CreateEvent / Events Page Specific Styles --- */
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.event-card {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+/* Helper class for margin-left */
+.ml-1 {
+  margin-left: 1rem;
+}
+

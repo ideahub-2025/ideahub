@@ -1,27 +1,33 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
+import pp from "../assets/defaultpp.jpg";
 
 const InvestorsPage = ({ investors, onSaveInvestor }) => {
+  // If no investors prop is provided, use sample data
+  const investorsData =
+    investors && investors.length > 0 ? investors : sampleInvestors;
+
   const [filterStatus, setFilterStatus] = useState("All");
-  const [searchTerm, setSearchTerm] = useState(""); // New search term state
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingInvestor, setEditingInvestor] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmationType, setConfirmationType] = useState(null); // "valid" or "invalid"
 
   // Filter investors based on both filterStatus and search term
-  const filteredInvestors = investors.filter((investor) => {
-    const matchesFilter = filterStatus === "All" || investor.status === filterStatus;
+  const filteredInvestors = investorsData.filter((investor) => {
+    const matchesFilter =
+      filterStatus === "All" || investor.status === filterStatus;
     const search = searchTerm.toLowerCase();
     const name = (investor.full_name || investor.name || "").toLowerCase();
     const email = investor.email ? investor.email.toLowerCase() : "";
-    const firm = (investor.firmName || investor.firm || "").toLowerCase();
+    const firm = (investor.firm_name || investor.firm || "").toLowerCase();
     const matchesSearch = name.includes(search) || email.includes(search) || firm.includes(search);
     return matchesFilter && matchesSearch;
   });
 
   // All status options shown in the dropdown.
-  const allStatusOptions = ["Verified", "Unverified", "Blocked", "Rejected"];
+  const allStatusOptions = ["Active","Verified", "Unverified", "Blocked", "Rejected"];
 
   // Allowed transitions:
   // - If the investor is Verified, only a change to Blocked is allowed.
@@ -61,14 +67,67 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
   // Called when the admin confirms a valid update.
   const confirmStatusChange = () => {
     if (editingInvestor && confirmationType === "valid") {
-      const updatedInvestor = { ...editingInvestor, status: newStatus };
-      onSaveInvestor(updatedInvestor.id, updatedInvestor);
-      setEditingInvestor(null);
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/investors/${editingInvestor.id}/update-status/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+  
+        const result = await response.json();
+        console.log("Server response:", result);
+  
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+  
+        alert("Status updated successfully!");
+        
+        // ✅ Ensure onSaveInvestor is called correctly
+        if (typeof onSaveInvestor === "function") {
+          onSaveInvestor(editingInvestor.id, { ...editingInvestor, status: newStatus });
+        } else {
+          console.error("❌ onSaveInvestor function is missing!");
+        }
+  
+        // ✅ Ensure the modal closes
+        setShowConfirm(false);  // Close confirmation modal
+        setEditingInvestor(null);  // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
     }
-    setShowConfirm(false);
+  };
+  
+
+        const result = await response.json();
+        console.log("Server response:", result);
+
+        if (!response.ok) {
+          alert("Error: " + (result.error || "Failed to update status"));
+          return;
+        }
+
+        alert("Status updated successfully!");
+
+        if (typeof onSaveInvestor === "function") {
+          onSaveInvestor(editingInvestor.id, { ...editingInvestor, status: newStatus });
+        } else {
+          console.error("onSaveInvestor function is missing!");
+        }
+
+        setShowConfirm(false); // Close confirmation modal
+        setEditingInvestor(null); // Close edit modal
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred while updating status.");
+      }
+    }
   };
 
-  // Called when the admin declines the update (or dismisses an invalid-change message).
+  // Called when the admin declines the update.
   const declineStatusChange = () => {
     setShowConfirm(false);
   };
@@ -77,66 +136,12 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
     setEditingInvestor(null);
   };
 
-  // Inline styles for the main modal popup.
-  const modalOverlayStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  };
-
-  const modalStyle = {
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "5px",
-    width: "90%",
-    maxWidth: "600px",
-    maxHeight: "90vh",
-    overflowY: "auto",
-    position: "relative",
-  };
-
-  const logoStyle = {
-    width: "100px",
-    height: "auto",
-    marginBottom: "1rem",
-  };
-
-  // Styles for the confirmation popup modal.
-  const confirmModalOverlayStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1100,
-  };
-
-  const confirmModalStyle = {
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "5px",
-    width: "90%",
-    maxWidth: "400px",
-    textAlign: "center",
-  };
-
   return (
     <div>
       <h2>Investor Management</h2>
 
       {/* Search Input */}
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="search-container">
         <input
           type="text"
           placeholder="Search by Name, Email, or Firm"
@@ -147,7 +152,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
       </div>
 
       {/* Dropdown filter for status */}
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="filter-container">
         <label htmlFor="statusFilter">Filter by Status: </label>
         <select
           id="statusFilter"
@@ -182,14 +187,14 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
                   <img
                     src={investor.profile_picture}
                     alt="Profile"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      objectFit: "cover",
-                    }}
+                    className="profile-img-thumb"
                   />
                 ) : (
-                  "N/A"
+                  <img
+                                  src={pp}
+                                  alt="Default Profile"
+                                  style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                />
                 )}
               </td>
               <td>{investor.full_name || investor.name}</td>
@@ -197,9 +202,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
               <td>{investor.firmName || investor.firm}</td>
               <td>{investor.status}</td>
               <td>
-                <button onClick={() => handleEditClick(investor)}>
-                  Edit
-                </button>
+                <button onClick={() => handleEditClick(investor)}>Edit</button>
               </td>
             </tr>
           ))}
@@ -224,7 +227,11 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
               className="profile-img"
             />
           ) : (
-            "N/A"
+           <img
+                           src={pp}
+                           alt="Default Profile"
+                           style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                         />
           )}
         </div>
         <div className="form-group">
@@ -311,7 +318,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Firm Name:</label>
           <input
             type="text"
-            value={editingInvestor.firmName || editingInvestor.firm || ""}
+            value={editingInvestor.firm_name || ""}
             readOnly
             className="form-control"
           />
@@ -320,7 +327,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Investment Stage:</label>
           <input
             type="text"
-            value={editingInvestor.investmentStage || ""}
+            value={editingInvestor.investment_stage || ""}
             readOnly
             className="form-control"
           />
@@ -329,7 +336,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Portfolio Size:</label>
           <input
             type="text"
-            value={editingInvestor.portfolioSize || ""}
+            value={editingInvestor.portfolio_size || ""}
             readOnly
             className="form-control"
           />
@@ -347,7 +354,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Min Investment:</label>
           <input
             type="text"
-            value={editingInvestor.minInvestment || ""}
+            value={editingInvestor.min_investment || ""}
             readOnly
             className="form-control"
           />
@@ -356,7 +363,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
           <label>Max Investment:</label>
           <input
             type="text"
-            value={editingInvestor.maxInvestment || ""}
+            value={editingInvestor.max_investment || ""}
             readOnly
             className="form-control"
           />
@@ -436,15 +443,13 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
 
       {/* Confirmation Popup Modal */}
       {showConfirm && (
-        <div style={confirmModalOverlayStyle}>
-          <div style={confirmModalStyle}>
+        <div className="confirm-modal-overlay">
+          <div className="confirm-modal">
             {confirmationType === "valid" ? (
               <>
-                <p>
-                  Are you sure you want to change the status to "{newStatus}"?
-                </p>
+                <p>Are you sure you want to change the status to "{newStatus}"?</p>
                 <button onClick={confirmStatusChange}>Confirm</button>
-                <button onClick={declineStatusChange} style={{ marginLeft: "1rem" }}>
+                <button onClick={declineStatusChange} className="ml-1">
                   Decline
                 </button>
               </>
