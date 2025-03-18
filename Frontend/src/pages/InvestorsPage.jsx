@@ -65,7 +65,7 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
   };
 
   // Called when the admin confirms a valid update.
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     if (editingInvestor && confirmationType === "valid") {
       try {
         const response = await fetch(`http://127.0.0.1:8000/api/investors/${editingInvestor.id}/update-status/`, {
@@ -100,33 +100,6 @@ const InvestorsPage = ({ investors, onSaveInvestor }) => {
       }
     }
   };
-  
-
-        const result = await response.json();
-        console.log("Server response:", result);
-
-        if (!response.ok) {
-          alert("Error: " + (result.error || "Failed to update status"));
-          return;
-        }
-
-        alert("Status updated successfully!");
-
-        if (typeof onSaveInvestor === "function") {
-          onSaveInvestor(editingInvestor.id, { ...editingInvestor, status: newStatus });
-        } else {
-          console.error("onSaveInvestor function is missing!");
-        }
-
-        setShowConfirm(false); // Close confirmation modal
-        setEditingInvestor(null); // Close edit modal
-      } catch (error) {
-        console.error("Error updating status:", error);
-        alert("An error occurred while updating status.");
-      }
-    }
-  };
-
   // Called when the admin declines the update.
   const declineStatusChange = () => {
     setShowConfirm(false);

@@ -142,25 +142,6 @@ const UsersPage = ({ users, onSaveUser, searchTerm, onSearchChange }) => {
     }
   };
   
-
-        alert("Status updated successfully!");
-
-        if (typeof onSaveUser === "function") {
-          onSaveUser(editingUser.id, { ...editingUser, status: newStatus });
-          handleCloseModal();
-        } else {
-          console.error("onSaveUser function is missing!");
-        }
-
-        setShowConfirm(false);
-        setEditingUser(null);
-      } catch (error) {
-        console.error("Error updating status:", error);
-        alert("An error occurred while updating status.");
-      }
-    }
-  };
-
   return (
     <div>
       <h2>User Management</h2>
