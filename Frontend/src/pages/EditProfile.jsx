@@ -1,5 +1,5 @@
 "use client"
-
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom"
 import { useState, useRef } from "react"
 import axios from "axios"
@@ -14,6 +14,10 @@ export default function ProfileEdit() {
     role: "Tech Entrepreneur",
     email: "alex@example.com",
   } // Destructure the state with defaults
+
+  useEffect(() => {
+    console.log("Editing profile for:", username);
+  }, [username]);
 
   const [formData, setFormData] = useState({
     role: role || "",

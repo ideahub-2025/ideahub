@@ -334,7 +334,10 @@ export default function EntHome() {
                       <span className="statValue">{userProfile.profile_completion}%</span>
                     </div>
                   </div>
-                  <button className="secondaryButton">Edit Profile</button>
+                  <button 
+        className="secondaryButton" 
+        onClick={() => navigate("/profile-edit", { state: { username } })}
+      >Edit Profile</button>
                 </div>
               </div>
 

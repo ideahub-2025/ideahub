@@ -498,15 +498,17 @@ class EntrepreneurProfileView(APIView):
 
 class UpcomingEventsView(APIView):
     permission_classes = [AllowAny]
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         print("UpcomingEventsView Initialized")  # Check if the view is created
-    
+
     def get(self, request):
-        upcoming_events = Event.objects.filter(date__gte=now()).order_by('date')[:5]  # Get next 5 events
-        print("UPCOMING EVENT, ",upcoming_events)
+        upcoming_events = Event.objects.filter(date__gte=now()).order_by('date')[:5]  # Filter by active status
+        print("UPCOMING EVENT, ", upcoming_events)
         serializer = EventSerializer(upcoming_events, many=True)
         return Response(serializer.data)
+
 
 
 

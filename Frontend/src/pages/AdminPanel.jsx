@@ -53,8 +53,8 @@ export default function AdminPanel() {
         return <UsersPage users={users} searchTerm={searchTerm} onSearchChange={(e) => setSearchTerm(e.target.value)} />;
       case "investors":
         return <InvestorsPage investors={investors} />;
-      case "posts":
-        return <PostsPage posts={posts} />;
+      // case "posts":
+      //   return <PostsPage posts={posts} />;
       case "settings":
         return <SettingsPage />;
       case "createEvent":
@@ -84,7 +84,7 @@ export default function AdminPanel() {
             <ul>
               <li><button onClick={() => setPage("users")}>Users</button></li>
               <li><button onClick={() => setPage("investors")}>Investors</button></li>
-              <li><button onClick={() => setPage("posts")}>Posts</button></li>
+              {/* <li><button onClick={() => setPage("posts")}>Posts</button></li> */}
               <li><button onClick={() => setPage("settings")}>Settings</button></li>
               <li><button onClick={() => setPage("createEvent")}>Create Event</button></li>
             </ul>
