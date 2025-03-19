@@ -12,7 +12,8 @@ class UserProfile(models.Model):
     password = models.CharField(max_length=255)
     reset_token = models.CharField(max_length=255, null=True, blank=True)
     reset_token_expiration = models.DateTimeField(null=True, blank=True)
-    status=models.CharField(max_length=255)
+    status = models.CharField(max_length=255, null=True, blank=True, default="Active")
+
     last_login = models.DateTimeField(auto_now=True)
 
     def get_email_field_name(self):
