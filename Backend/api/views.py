@@ -51,42 +51,52 @@ from .models import Idea
 from .serializers import InvestorStatusSerializer
 from .serializers import EntrepreneurStatusSerializer
 
+import redis
+
+
+# Initialize Redis client
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=1, decode_responses=True)
+
 class UserProfileCreateView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
-        """Handles user registration"""
-        data = request.data.copy()
-        print("USER REG DATA:", data)
+        try:
+            """Handles user registration"""
+            data = request.data.copy()
+            print("USER REG DATA:", data)
 
-        # Password validation
-        if 'password' not in data:
-            return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        password = data["password"]
-        if len(password) < 8:
-            return Response({"error": "Password must be at least 8 characters long"}, status=status.HTTP_400_BAD_REQUEST)
-        data["password"] = make_password(password)  # Hash password before saving
+            # Password validation
+            if 'password' not in data:
+                return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            password = data["password"]
+            if len(password) < 8:
+                return Response({"error": "Password must be at least 8 characters long"}, status=status.HTTP_400_BAD_REQUEST)
+            data["password"] = make_password(password)  # Hash password before saving
 
-        # Username validation
-        if 'username' in data and UserProfile.objects.filter(username=data['username']).exists():
-            return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            # Username validation
+            if 'username' in data and UserProfile.objects.filter(username=data['username']).exists():
+                return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Email validation
-        if 'email' in data:
-            email = data['email']
-            if not re.match(r"[^@]+@[^@]+\.[^@]+", email):  # Simple email format check
-                return Response({"error": "Invalid email format"}, status=status.HTTP_400_BAD_REQUEST)
-            if UserProfile.objects.filter(email=email).exists():
-                return Response({"error": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            # Email validation
+            if 'email' in data:
+                email = data['email']
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", email):  # Simple email format check
+                    return Response({"error": "Invalid email format"}, status=status.HTTP_400_BAD_REQUEST)
+                if UserProfile.objects.filter(email=email).exists():
+                    return Response({"error": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Serializing and saving the user profile
-        serializer = UserProfileSerializer(data=data)
-        if serializer.is_valid():
-            instance = serializer.save()
-            print(f"Instance primary key after save: {instance.pk}")  # Debugging statement
-            return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
-
-        return Response({"error": "Registration failed! Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+            # Serializing and saving the user profile
+            serializer = UserProfileSerializer(data=data)
+            print(data)
+            if serializer.is_valid():
+                print("SERIALISER")
+                instance = serializer.save()
+                print(f"Instance primary key after save: {instance.pk}")  # Debugging statement
+                return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
+            return Response({"error": "Registration failed! Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({"error": "Registration failed! Please try again."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -618,34 +628,39 @@ class IdeaListCreateView(APIView):
 
         return Response({"status": True, "data": ideas}, status=status.HTTP_200_OK)
 
+
+
 class TrendingIdeaView(APIView):
     permission_classes = []  # No authentication required
 
     def get(self, request):
         username = request.GET.get("username")
+        
+        # Create a unique cache key based on the username
+        cache_key = f"trending_ideas_{username if username else 'all'}"
+        
+        # Try to get cached data
+        cached_data = redis_client.get(cache_key)
+        if cached_data:
+            return Response({"status": True, "data": json.loads(cached_data)}, status=status.HTTP_200_OK)
 
-        # Modify query to exclude the given username
+        # If not cached, fetch data from MongoDB
         query = {"username": {"$ne": username}} if username else {}
-
-        # Fetch data from MongoDB
         result = get_table_data("api_idea", query)
 
-        # Handle database errors
         if not result.get("status", True):
             return Response(
                 {"status": False, "message": "Error fetching data"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # Ensure 'data' key exists and is a list
         ideas = result.get("data", [])
 
-        # Convert ObjectId to string for each document and fix image handling
+        # Convert ObjectId to string and handle images
         for idea in ideas:
             if "_id" in idea:
                 idea["_id"] = str(idea["_id"])
 
-            # Convert Base64 image to a media file and serve as URL
             # Convert Base64 image to a media file
             if "image" in idea and isinstance(idea["image"], str):
                 if idea["image"].startswith("/9j/"):  # Base64 detection
@@ -658,11 +673,12 @@ class TrendingIdeaView(APIView):
 
                     # Replace Base64 data with URL
                     idea["image"] = f"{settings.MEDIA_URL}{image_filename}"
-                else:
-                    # If already a valid URL, keep it
-                    idea["image"] = idea["image"]
+
+        # Store data in Redis with a 5-minute expiration time
+        redis_client.setex(cache_key, 300, json.dumps(ideas))
 
         return Response({"status": True, "data": ideas}, status=status.HTTP_200_OK)
+
 
 class get_user_details(APIView):
     permission_classes = []  
