@@ -632,13 +632,14 @@ class IdeaListCreateView(APIView):
 
 class TrendingIdeaView(APIView):
     permission_classes = []  # No authentication required
-
+    import time
+    time.sleep(60)
     def get(self, request):
         username = request.GET.get("username")
         
         # Create a unique cache key based on the username
         cache_key = f"trending_ideas_{username if username else 'all'}"
-        
+        print("CACHE KEY",cache_key)
         # Try to get cached data
         cached_data = redis_client.get(cache_key)
         if cached_data:

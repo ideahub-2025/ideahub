@@ -31,7 +31,15 @@ const CreateEvent = () => {
         if (!response.ok) throw new Error("Failed to fetch events");
 
         const data = await response.json();
-        setEvents(data);
+        
+
+      // Map `status` to `isActive`
+        const mappedData = data.map(event => ({
+          ...event,
+          isActive: event.status === "Active", // Convert status to boolean
+        }));
+        console.log("Fetched events with corrected isActive:", mappedData);
+        setEvents(mappedData);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -48,7 +56,7 @@ const CreateEvent = () => {
     setErrorMessage("");
     if (event) {
       setTitle(event.title);
-      setDate(event.date);
+      setDate(event.date ? event.date.split("T")[0] : ""); // Extract YYYY-MM-DD
       setLocation(event.location);
       setDescription(event.description);
       setIsActive(event.isActive);
@@ -92,15 +100,15 @@ const CreateEvent = () => {
         const response = await fetch(url, {
           method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, date, location, description }),
+          body: JSON.stringify({ title, date, location, description, status: isActive ? "Active" : "Inactive" }),
         });
-
+        
         const result = await response.json();
         if (!response.ok) {
           setErrorMessage(result.error || "Failed to save event.");
           return;
         }
-
+        setIsActive(newStatus);
         setSuccessMessage(editingEvent ? "Event updated successfully!" : "Event created successfully!");
         setShowSuccessModal(true);
         triggerRefresh(); // Refresh events after saving

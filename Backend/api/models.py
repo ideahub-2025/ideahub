@@ -56,7 +56,8 @@ class Entrepreneur(models.Model):
     ideas_posted = models.IntegerField(default=0)
     investor_connections = models.IntegerField(default=0)
     profile_completion = models.IntegerField(default=0)
-    status=models.CharField(max_length=255)
+    status = models.CharField(max_length=255, null=True, blank=True, default="Active")
+
     
     # Add Profile Picture Field
     profile_picture = models.ImageField(upload_to='entrepreneur_profiles/', null=True, blank=True)
@@ -99,7 +100,8 @@ class Investor(models.Model):
     sectors = models.TextField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='investor_profiles/', null=True, blank=True)
     id_document = models.FileField(upload_to='documents/', null=True, blank=True)
-    status=models.CharField(max_length=255)
+    status = models.CharField(max_length=255, null=True, blank=True, default="Active")
+
     def __str__(self):
         return self.username
 
@@ -140,7 +142,7 @@ class Event(models.Model):
     date = models.DateTimeField()
     location = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=255)
+    status = models.CharField(max_length=255, null=True, blank=True, default="Active")
 
     def __str__(self):
         return self.title
