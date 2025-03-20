@@ -513,7 +513,6 @@ class UpcomingEventsView(APIView):
 
 
 
-
 class IdeaListCreateViewpost(APIView):
     parser_classes = (MultiPartParser, FormParser)  # Allow file uploads
     permission_classes = []  
@@ -635,7 +634,7 @@ class IdeaListCreateView(APIView):
 class TrendingIdeaView(APIView):
     permission_classes = []  # No authentication required
     import time
-    time.sleep(60)
+    #time.sleep(60)
     def get(self, request):
         username = request.GET.get("username")
         
