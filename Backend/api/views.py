@@ -50,7 +50,7 @@ from .serializers import IdeaSerializer
 from .models import Idea
 from .serializers import InvestorStatusSerializer
 from .serializers import EntrepreneurStatusSerializer
-
+from rest_framework.parsers import MultiPartParser, FormParser
 import redis
 
 
@@ -498,13 +498,14 @@ class EntrepreneurProfileView(APIView):
 
 class UpcomingEventsView(APIView):
     permission_classes = [AllowAny]
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         print("UpcomingEventsView Initialized")  # Check if the view is created
-    
+
     def get(self, request):
-        upcoming_events = Event.objects.filter(date__gte=now()).order_by('date')[:5]  # Get next 5 events
-        print("UPCOMING EVENT, ",upcoming_events)
+        upcoming_events = Event.objects.filter(date__gte=now(), status="Active").order_by('date')[:5]
+        print("UPCOMING EVENT, ", upcoming_events)
         serializer = EventSerializer(upcoming_events, many=True)
         return Response(serializer.data)
 
@@ -632,13 +633,14 @@ class IdeaListCreateView(APIView):
 
 class TrendingIdeaView(APIView):
     permission_classes = []  # No authentication required
-
+    import time
+    #time.sleep(60)
     def get(self, request):
         username = request.GET.get("username")
         
         # Create a unique cache key based on the username
         cache_key = f"trending_ideas_{username if username else 'all'}"
-        
+        print("CACHE KEY",cache_key)
         # Try to get cached data
         cached_data = redis_client.get(cache_key)
         if cached_data:
@@ -801,7 +803,8 @@ class UpdateEntrepreneurStatusView(APIView):
 
             serializer.save()
             try:
-                update_field_by_username(
+                update_field_by_username(*
+
                                         "api_userprofile",
                                         username=entrepreneur.username,
                                         update_data={"status": new_status}
@@ -850,4 +853,56 @@ class UpdateEventView(generics.UpdateAPIView):
                 {"message": "Event updated successfully", "event": EventSerializer(event).data},
                 status=status.HTTP_200_OK
             )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class AllEventsView(APIView):
+#     permission_classes = [AllowAny]
+#     authentication_classes = [] 
+    
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
+#         print("UpcomingEventsView Initialized")  # Check if the view is created
+#     def get(self, request):
+#         events = Event.objects.all().order_by('-date')  # Fetch all events
+#         print("ALL EVENTS: ", events)
+#         serializer = EventSerializer(events, many=True)
+#         return Response(serializer.data)
+
+
+class UpdateUserProfile(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # Open to all requests
+    parser_classes = [MultiPartParser, FormParser]  # ✅ Allow file uploads
+
+    def patch(self, request, username):
+        print("INSIDEEE")
+        entrepreneur = get_object_or_404(Entrepreneur, username=username)
+        print("USERNAME:", entrepreneur.username)
+
+        data = request.data.copy()  # ✅ Make mutable copy
+        print("Incoming Data:", data)
+
+        # ✅ Handle profile_picture properly
+        if "profile_picture" in request.FILES:
+            entrepreneur.profile_picture = request.FILES["profile_picture"]
+
+        serializer = EntrepreneurStatusSerializer(entrepreneur, data=data, partial=True)
+        print("SERIALIZER:", serializer)
+
+        if serializer.is_valid():
+            print("Serializer is valid. Saving data.")
+            serializer.save()
+
+            try:
+                update_field_by_username(
+                    "api_entrepreneur",
+                    username=entrepreneur.username,
+                    update_data=data
+                )
+            except Exception as e:
+                print("Error updating MongoDB:", str(e))
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        print("Serializer errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

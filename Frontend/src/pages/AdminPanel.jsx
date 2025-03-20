@@ -3,11 +3,11 @@ import axios from "axios";
 import { Lightbulb } from "lucide-react";
 import UsersPage from "./UsersPage";
 import InvestorsPage from "./InvestorsPage";
-import PostsPage from "./PostsPage";
+//import PostsPage from "./PostsPage";
 import SettingsPage from "./SettingsPage";
 import CreateEvent from "./CreateEvent";
 import "../App.css";
-import pp from "../assets/defaultpp.jpg";
+//import pp from "../assets/defaultpp.jpg";
 
 export default function AdminPanel() {
   const [page, setPage] = useState("users");
@@ -40,12 +40,12 @@ export default function AdminPanel() {
   }, []);
 
   // Fetch posts from Django API
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/ideas/")
-      .then((response) => setPosts(response.data))
-      .catch((error) => console.error("Error fetching posts:", error));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:8000/api/ideas/")
+  //     .then((response) => setPosts(response.data))
+  //     .catch((error) => console.error("Error fetching posts:", error));
+  // }, []);
 
   const renderContent = () => {
     switch (page) {
@@ -53,8 +53,8 @@ export default function AdminPanel() {
         return <UsersPage users={users} searchTerm={searchTerm} onSearchChange={(e) => setSearchTerm(e.target.value)} />;
       case "investors":
         return <InvestorsPage investors={investors} />;
-      case "posts":
-        return <PostsPage posts={posts} />;
+      // case "posts":
+      //   return <PostsPage posts={posts} />;
       case "settings":
         return <SettingsPage />;
       case "createEvent":
@@ -84,7 +84,7 @@ export default function AdminPanel() {
             <ul>
               <li><button onClick={() => setPage("users")}>Users</button></li>
               <li><button onClick={() => setPage("investors")}>Investors</button></li>
-              <li><button onClick={() => setPage("posts")}>Posts</button></li>
+              {/* <li><button onClick={() => setPage("posts")}>Posts</button></li> */}
               <li><button onClick={() => setPage("settings")}>Settings</button></li>
               <li><button onClick={() => setPage("createEvent")}>Create Event</button></li>
             </ul>
