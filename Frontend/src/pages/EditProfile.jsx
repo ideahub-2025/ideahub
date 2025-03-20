@@ -20,91 +20,141 @@ export default function ProfileEdit() {
   }, [username]);
 
   const [formData, setFormData] = useState({
-    role: role || "",
+    username: username,
+    full_name: "",
+    job_role:  "",
     location: "",
     bio: "",
     phone: "",
     linkedin: "",
     twitter: "",
-    startupName: "",
-    startDate: "",
-    teamSize: "",
+    startup_name: "",
+    start_date: "",
+    team_size: "",
     website: "",
   })
-
+  const [start_date, setStartDate] = useState(null)
   const [charCount, setCharCount] = useState(0)
   const [photoPreview, setPhotoPreview] = useState(null)
   const fileInputRef = useRef(null)
 
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
-
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate() // Hook for navigation
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+  // Fetch user profile on load
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
 
-    if (name === "bio") {
-      setCharCount(value.length)
-    }
-  }
-
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setPhotoPreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    // Prepare form data for submission
-    const dataToSubmit = {
-      ...formData,
-      username,
-      fullName,
-      email,
-      photo: photoPreview, // You might want to send the base64 image or a file URL
+    if (!storedUsername) {
+      navigate("/");
+      return;
     }
 
-    try {
-      // Make the API call to update the user profile
-      const response = await axios.put(
-        `http://localhost:8000/api/update_entrepreneur_profile/${username}/`,
-        dataToSubmit,
-        {
+    const fetchUserProfile = async () => {
+      try {
+        
+        const response = await fetch(`http://localhost:8000/api/entrepreneur/profile/`, {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-        },
-      )
+          body: JSON.stringify({ username: storedUsername })
+        });
+        const data = await response.json();
+        // setFormData(data);
+        setFormData((prev) => ({
+          ...prev,
+          ...data,
+          start_date: data.start_date ? data.start_date.split("T")[0] : "", // Ensure correct format
+        }))
+    
+        setStartDate(data.start_date ? data.start_date.split("T")[0] : "");
+        setPhotoPreview(data.profile_picture); // If backend returns a photo URL
+      } catch (error) {
+        setErrorMessage("Failed to fetch profile data.");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [navigate]);
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "bio") {
+      setCharCount(value.length);
+    }
+  };
+
+  // Handle photo upload
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+        setFormData((prev) => ({
+            ...prev,
+            profile_picture: file, // Store file instead of Base64
+        }));
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setPhotoPreview(e.target.result); // Still show preview
+        };
+        reader.readAsDataURL(file);
+    }
+};
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setErrorMessage(null);
+  setSuccessMessage(null);
+
+  const formDataToSend = new FormData();
+
+  // Append all form fields
+  Object.keys(formData).forEach((key) => {
+      if (key === "profile_picture" && fileInputRef.current?.files[0]) {
+          formDataToSend.append("profile_picture", fileInputRef.current.files[0]);  // Append image file
+      } else {
+          formDataToSend.append(key, formData[key]);
+      }
+  });
+
+  try {
+      const response = await axios.patch(
+          `http://localhost:8000/api/userprofile/${username}/update/`,  
+          formDataToSend,
+          {
+              headers: {
+                  "Content-Type": "multipart/form-data",
+              },
+          }
+      );
 
       if (response.status === 200) {
-        setSuccessMessage("Profile successfully updated! Redirecting to dashboard...")
-        setErrorMessage(null)
-
-        // Redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          navigate("/dashboard")
-        }, 2000)
+          setSuccessMessage("Profile updated successfully!");
+          setTimeout(() => {
+            navigate("/ent-home");
+        }, 200);
       } else {
-        throw new Error("An error occurred during profile update.")
+          setErrorMessage("Failed to update profile.");
       }
-    } catch (error) {
-      setErrorMessage("There was an issue updating your profile. Please try again later.")
-      setSuccessMessage(null)
-    }
+  } catch (error) {
+      setErrorMessage("An error occurred while updating profile.");
+      console.error("Profile update error:", error);
   }
+};
 
+
+ 
   return (
     <div className="edit-profile-container">
       <div className="edit-profile-header">
@@ -134,13 +184,13 @@ export default function ProfileEdit() {
           <div className="edit-form-grid">
             <div className="edit-form-group">
               <label>Full Name</label>
-              <input type="text" value={fullName} disabled className="edit-disabled-input" />
+              <input type="text" value={formData.full_name} disabled className="edit-disabled-input" />
               <span className="edit-input-note">Name cannot be changed</span>
             </div>
 
             <div className="edit-form-group">
               <label>Email Address</label>
-              <input type="email" value={email} disabled className="edit-disabled-input" />
+              <input type="email" value={formData.email} disabled className="edit-disabled-input" />
               <span className="edit-input-note">Email cannot be changed</span>
             </div>
           </div>
@@ -150,8 +200,8 @@ export default function ProfileEdit() {
               <label>What's your role?</label>
               <input
                 type="text"
-                name="role"
-                value={formData.role}
+                name="job_role"
+                value={formData.job_role}
                 onChange={handleInputChange}
                 placeholder="e.g., CEO & Co-Founder"
               />
@@ -271,8 +321,8 @@ export default function ProfileEdit() {
               <label>Startup name</label>
               <input
                 type="text"
-                name="startupName"
-                value={formData.startupName}
+                name="startup_name"
+                value={formData.startup_name}
                 onChange={handleInputChange}
                 placeholder="e.g., TechFlow AI"
               />
@@ -280,7 +330,7 @@ export default function ProfileEdit() {
 
             <div className="edit-form-group">
               <label>When did you start?</label>
-              <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} />
+              <input type="date" name="start_date" value={start_date} onChange={handleInputChange} />
             </div>
           </div>
 
@@ -289,8 +339,8 @@ export default function ProfileEdit() {
               <label>Current team size</label>
               <input
                 type="number"
-                name="teamSize"
-                value={formData.teamSize}
+                name="team_size"
+                value={formData.team_size}
                 onChange={handleInputChange}
                 placeholder="e.g., 5"
                 min="1"
@@ -311,7 +361,7 @@ export default function ProfileEdit() {
         </div>
 
         <div className="edit-form-actions">
-          <button type="button" className="edit-btn-secondary" onClick={() => navigate("/dashboard")}>
+          <button type="button" className="edit-btn-secondary" onClick={() => navigate("/ent-home")}>
             Cancel
           </button>
           <button type="submit" className="edit-btn-primary">

@@ -57,8 +57,8 @@ def update_field_by_username(collection_name, username, update_data):
         query = {"username": username}  
 
         # ✅ Perform the update operation
-        result = collection.update_many(query, {"$set": update_data})
-
+        result = collection.update_one(query, {"$set": update_data})
+        print("MODIFIED COUNT",result.modified_count)
         # ✅ Check how many documents were modified
         if result.modified_count > 0:
             return Response(

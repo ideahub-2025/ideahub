@@ -33,7 +33,7 @@ const CreateEvent = () => {
         const data = await response.json();
         
 
-      // Map `status` to `isActive`
+      //Map `status` to `isActive`
         const mappedData = data.map(event => ({
           ...event,
           isActive: event.status === "Active", // Convert status to boolean
