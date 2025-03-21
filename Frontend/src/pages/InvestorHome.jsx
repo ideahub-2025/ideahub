@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Bell, MessageSquare, Search, Lightbulb, Filter, ChevronRight, Star, ThumbsUp, User, TrendingUp, DollarSign, Users } from 'lucide-react'
 import '../App.css'
 import Entreprenuer from "../assets/ENT.jpg"
@@ -58,6 +58,9 @@ export default function InvestorHome() {
     setActiveTab(tab)
   }
 
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   return (
     <div>
       {/* Header/Navigation */}
@@ -82,8 +85,10 @@ export default function InvestorHome() {
               <button className="iconButton">
                 <MessageSquare />
               </button>
-              <div className="userAvatar">
-                <img src={pp} alt="User" />
+              <div className="user-avatar-container" ref={dropdownRef}>
+                  <div className="userAvatar" onClick={() => setIsOpen(!isOpen)}>
+                    <img src={pp} alt="User" />
+                  </div>
               </div>
             </div>
           </nav>
@@ -144,7 +149,6 @@ export default function InvestorHome() {
                       <span className="statValue">90%</span>
                     </div>
                   </div>
-                  <button className="secondaryButton">Edit Profile</button>
                 </div>
               </div>
 
@@ -234,18 +238,6 @@ export default function InvestorHome() {
                       </div>
                       <div className="ideaCardContent">
                         <p className="ideaDescription">{startup.tagline}</p>
-                        <div className="fundingProgress">
-                          <div className="fundingDetails">
-                            <span className="fundingRaised">{startup.raised}</span>
-                            <span className="fundingGoal">of {startup.fundingGoal}</span>
-                          </div>
-                          <div className="progressBar">
-                            <div 
-                              className="progressFill" 
-                              style={{ width: `${(parseInt(startup.raised.replace(/\D/g, '')) / parseInt(startup.fundingGoal.replace(/\D/g, ''))) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
                       </div>
                       <div className="ideaCardFooter">
                         <div className="engagementActions">
@@ -265,7 +257,7 @@ export default function InvestorHome() {
                             {startup.views} views
                           </span>
                         </div>
-                        <button className="accentButton">View Details</button>
+                        <button className="accentButton">Message</button>
                       </div>
                     </div>
                   ))}
@@ -285,7 +277,7 @@ export default function InvestorHome() {
                       </div>
                       <h3 className="emptyStateTitle">Set your investment preferences</h3>
                       <p className="emptyStateMessage">Complete your investment profile to get personalized recommendations</p>
-                      <button className="accentButton">
+                      <button className="accentButton" onClick={() => setIsFilterDialogOpen(true)}>
                         Update Preferences
                       </button>
                     </div>
@@ -341,10 +333,7 @@ export default function InvestorHome() {
                   <p className="eventDescription">
                     Join us for an evening of innovative pitches from emerging startups in the tech industry.
                   </p>
-                  <div className="eventFooter">
-                    <span className="eventAttendees">24 startups • 50+ investors</span>
-                    <button className="secondaryButton">RSVP</button>
-                  </div>
+                
                 </div>
               </div>
             ))}
@@ -534,6 +523,14 @@ export default function InvestorHome() {
             </div>
           </div>
         </div>
+      )}
+
+      {isOpen && (
+              <div className="dropdown-menu">
+                <ul>
+                  <li className="logout">Logout</li>
+                </ul>
+              </div>
       )}
     </div>
   );

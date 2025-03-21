@@ -45,7 +45,8 @@ export default function EntHome() {
   const [events, setEvents] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-
+   const [isOpen, setIsOpen] = useState(false);
+   const dropdownRef = useRef(null);
   
 
   useEffect(() => {
@@ -272,8 +273,10 @@ export default function EntHome() {
               <button className="iconButton">
                 <MessageSquare />
               </button>
-              <div className="userAvatar">
-                <img src={pp} alt="User" />
+              <div className="user-avatar-container" ref={dropdownRef}>
+                <div className="userAvatar" onClick={() => setIsOpen(!isOpen)}>
+                  <img src={pp} alt="User" />
+                </div>
               </div>
             </div>
           </nav>
@@ -492,10 +495,6 @@ export default function EntHome() {
               {idea.comments ? idea.comments.length : 0} {/* Show comment count */}
             </button>
           </div>
-          <button className="saveButton">
-            <Star />
-            Save
-          </button>
         </div>
       </div>
     ))
@@ -787,6 +786,14 @@ export default function EntHome() {
             </div>
           </div>
         </div>
+      )}
+
+      {isOpen && (
+              <div className="dropdown-menu">
+                <ul>
+                  <li className="logout">Logout</li>
+                </ul>
+              </div>
       )}
     </div>    
   )
