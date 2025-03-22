@@ -101,7 +101,7 @@ class Investor(models.Model):
     profile_picture = models.ImageField(upload_to='investor_profiles/', null=True, blank=True)
     id_document = models.FileField(upload_to='documents/', null=True, blank=True)
     status = models.CharField(max_length=255, null=True, blank=True, default="Active")
-
+    profile_completion = models.IntegerField(default=0)
     def __str__(self):
         return self.username
 

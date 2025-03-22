@@ -27,7 +27,7 @@ urlpatterns = [
     # path('events/all/', AllEventsView.as_view(), name='all-events'),
     path('userprofile/<str:username>/update/', UpdateUserProfile.as_view(), name='update-user-profile'),
     path('investors-trending-ideas/', InvestorsTrendingIdeaView.as_view(), name='investors-trending-ideas'),
-    path('investors/profile/', InvestorProfileView.as_view(), name='investors-profile')
+    path('investors-profile/', InvestorProfileView.as_view(), name='investors-profile')
   
 ]
 

@@ -957,7 +957,7 @@ class InvestorProfileView(APIView):
     def post(self, request):
         try:
             logger.info("Processing POST request in InvestorProfileView.")
-
+            print("INVESTOR PROFILE")
             # Extract the username from the request body
             username = request.data.get('username')
             if not username:
@@ -967,6 +967,7 @@ class InvestorProfileView(APIView):
 
             # Fetch entrepreneur profile using the provided username
             investor = get_object_or_404(Investor, username=username)
+            
 
             # Prepare response data
             investor_data = {
@@ -985,7 +986,7 @@ class InvestorProfileView(APIView):
                     request.build_absolute_uri(investor.profile_picture.url)
                     if investor.profile_picture else None
                 ),
-                "last_login": investor.last_login,
+                
             }
             try:
                 completion_percentage=0
@@ -1002,7 +1003,7 @@ class InvestorProfileView(APIView):
                     print("ERROR OCCURED IN percent UPADATION",str(e))
             except Exception as e:
                 print("ERROR OCCURED IN percent UPADATION",str(e))
-            return Response(entrepreneur_data, status=200)
+            return Response(investor_data, status=200)
 
         except Exception as e:
             logger.error(f"API Error: {str(e)}")
