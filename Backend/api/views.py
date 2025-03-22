@@ -512,7 +512,7 @@ class UpcomingEventsView(APIView):
         print("UpcomingEventsView Initialized")  # Check if the view is created
 
     def get(self, request):
-        upcoming_events = Event.objects.filter(date__gte=now(), status="Active").order_by('date')[:5]
+        upcoming_events = Event.objects.filter(date__gte=now()).order_by('date')[:5]
         print("UPCOMING EVENT, ", upcoming_events)
         serializer = EventSerializer(upcoming_events, many=True)
         return Response(serializer.data)
@@ -914,3 +914,97 @@ class UpdateUserProfile(APIView):
 
         print("Serializer errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class InvestorsTrendingIdeaView(APIView):
+    permission_classes = []  # No authentication required
+
+    def get(self, request):
+        result = get_table_data("api_idea", None)
+
+        if not result.get("status", True):
+            return Response(
+                {"status": False, "message": "Error fetching data"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        ideas = result.get("data", [])
+
+        # Convert ObjectId to string and handle images
+        for idea in ideas:
+            if "_id" in idea:
+                idea["_id"] = str(idea["_id"])
+
+            # Convert Base64 image to a media file
+            if "image" in idea and isinstance(idea["image"], str):
+                if idea["image"].startswith("/9j/"):  # Base64 detection
+                    image_filename = f"{idea['_id']}.jpg"
+                    image_path = os.path.join(settings.MEDIA_ROOT, image_filename)
+
+                    # Save Base64 as an actual image file
+                    with open(image_path, "wb") as img_file:
+                        img_file.write(base64.b64decode(idea["image"]))
+
+                    # Replace Base64 data with URL
+                    idea["image"] = f"{settings.MEDIA_URL}{image_filename}"
+
+        return Response({"status": True, "data": ideas}, status=status.HTTP_200_OK)
+
+
+class InvestorProfileView(APIView):
+
+    permission_classes = [AllowAny]
+    authentication_classes = [] 
+    def post(self, request):
+        try:
+            logger.info("Processing POST request in InvestorProfileView.")
+
+            # Extract the username from the request body
+            username = request.data.get('username')
+            if not username:
+                return Response({'error': 'Username not provided'}, status=400)
+
+            logger.info(f"Requested username: {username}")
+
+            # Fetch entrepreneur profile using the provided username
+            investor = get_object_or_404(Investor, username=username)
+
+            # Prepare response data
+            investor_data = {
+                "full_name": investor.full_name,
+                "username": investor.username,
+                "email": investor.email,
+                "role": investor.role,
+                "location": investor.location,
+                "bio": investor.bio,
+                "phone": investor.phone,
+                "linkedin": investor.linkedin,
+                "twitter": investor.twitter,
+                "website": investor.website,
+                "profile_completion": investor.profile_completion,
+                "profile_picture": (
+                    request.build_absolute_uri(investor.profile_picture.url)
+                    if investor.profile_picture else None
+                ),
+                "last_login": investor.last_login,
+            }
+            try:
+                completion_percentage=0
+                percent_response=get_record_completion_percentage("api_investor", username)
+                completion_percentage=percent_response.data.get("completion_percentage")
+                try:
+                            count_update_response = update_field_by_username(
+                                        "api_investor",
+                                        username=username,
+                                        update_data={"profile_completion": completion_percentage}
+                                    )
+                            print("profile_completion UPDATE RESPONSE",percent_response.data)
+                except Exception as e:
+                    print("ERROR OCCURED IN percent UPADATION",str(e))
+            except Exception as e:
+                print("ERROR OCCURED IN percent UPADATION",str(e))
+            return Response(entrepreneur_data, status=200)
+
+        except Exception as e:
+            logger.error(f"API Error: {str(e)}")
+            return Response({'error': 'API error', 'message': str(e)}, status=500)
+

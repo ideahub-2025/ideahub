@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import CreateEventView, UpcomingEventsView,UpdateUserProfile, UpdateAdminUserView,IdeaListCreateViewpost, get_user_details, UpdateInvestorStatusView, TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView,UpdateEventView, UpdateEntrepreneurStatusView
+from .views import InvestorProfileView, CreateEventView, UpcomingEventsView,UpdateUserProfile,InvestorsTrendingIdeaView, UpdateAdminUserView,IdeaListCreateViewpost, get_user_details, UpdateInvestorStatusView, TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView,UpdateEventView, UpdateEntrepreneurStatusView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -26,6 +26,8 @@ urlpatterns = [
     path("events/<int:pk>/update/", UpdateEventView.as_view(), name="update-event"),
     # path('events/all/', AllEventsView.as_view(), name='all-events'),
     path('userprofile/<str:username>/update/', UpdateUserProfile.as_view(), name='update-user-profile'),
+    path('investors-trending-ideas/', InvestorsTrendingIdeaView.as_view(), name='investors-trending-ideas'),
+    path('investors/profile/', InvestorProfileView.as_view(), name='investors-profile')
   
 ]
 
