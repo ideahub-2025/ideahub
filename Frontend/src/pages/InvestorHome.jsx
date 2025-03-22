@@ -81,7 +81,7 @@ export default function InvestorHome() {
 
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/investors/profile/`, {
+        const response = await fetch(`http://localhost:8000/api/investors-profile/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
