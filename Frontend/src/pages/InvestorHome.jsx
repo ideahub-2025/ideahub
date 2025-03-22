@@ -1,65 +1,109 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Bell, MessageSquare, Search, Lightbulb, Filter, ChevronRight, Star, ThumbsUp, User, TrendingUp, DollarSign, Users } from 'lucide-react'
 import '../App.css'
 import Entreprenuer from "../assets/ENT.jpg"
 import pp from "../assets/defaultpp.jpg"
 
 export default function InvestorHome() {
+  const [username, setUsername] = useState(null);
   const [activeTab, setActiveTab] = useState("trending")
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false)
-  const [trendingStartups, setTrendingStartups] = useState([
-    {
-      id: 1,
-      name: "EcoPackage",
-      tagline: "Biodegradable packaging made from agricultural waste that decomposes within 30 days.",
-      founder: "Jane Cooper",
-      avatar: "/placeholder.svg?height=40&width=40",
-      industry: "Sustainability",
-      stage: "Seed",
-      fundingGoal: "$500K",
-      raised: "$320K",
-      likes: 128,
-      comments: 32,
-      views: 432
-    },
-    {
-      id: 2,
-      name: "FinanceAI",
-      tagline: "AI-powered financial advisory platform providing customized investment advice based on spending habits.",
-      founder: "Robert Fox",
-      avatar: "/placeholder.svg?height=40&width=40",
-      industry: "Fintech",
-      stage: "Pre-seed",
-      fundingGoal: "$250K",
-      raised: "$120K",
-      likes: 95,
-      comments: 32,
-      views: 310
-    },
-    {
-      id: 3,
-      name: "MediConnect",
-      tagline: "Telemedicine platform connecting patients with specialists worldwide using AR technology.",
-      founder: "Wade Warren",
-      avatar: "/placeholder.svg?height=40&width=40",
-      industry: "Healthcare",
-      stage: "Series A",
-      fundingGoal: "$2M",
-      raised: "$1.2M",
-      likes: 87,
-      comments: 32,
-      views: 275
-    },
-  ])
-
+  const [trendingStartups, setTrendingStartups] = useState([])
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const handleTabChange = (tab) => {
     setActiveTab(tab)
   }
-
+  const [userProfile, setUserProfile] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [events, setEvents] = useState([]);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchTrendingIdeas = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:8000/api/investors-trending-ideas/");
+        const data = await response.json();
+
+        console.log("Investors Trending Ideas API Response:", data);
+
+        if (response.ok && data.status) {
+          setTrendingStartups(data.data);
+        } else {
+          setError("Failed to load trending ideas.");
+        }
+      } catch (error) {
+        console.error("Error fetching investors' trending ideas:", error);
+        setError("Failed to fetch investors' trending ideas. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrendingIdeas();
+  }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/events/upcoming/`);
+        if (!response.ok) throw new Error("Failed to fetch events");
+  
+        const data = await response.json();
+  
+        // Filter events to include only those with "Active" status
+        const activeEvents = data.filter(event => event.status === "Active");
+  
+        setEvents(activeEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+  
+    fetchEvents();
+  }, []);
+
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+
+    console.log("Username:", storedUsername);
+
+    if (!storedUsername) {
+      navigate("/");
+      return;
+    }
+    setUsername(storedUsername);
+
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/investors/profile/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: storedUsername })
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+
+        const data = await response.json();
+        setUserProfile(data);
+      } catch (error) {
+        console.error("Failed to fetch user profile", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [navigate]);
 
   return (
     <div>
@@ -130,23 +174,16 @@ export default function InvestorHome() {
                 <div className="cardContent">
                   <div className="profileSection">
                     <div className="profilePicture">
-                      <img src={pp} alt="Profile" />
+                    <img src={userProfile?.profile_picture || pp} alt="Profile" />
                     </div>
-                    <h3 className="userName">Michael Thompson</h3>
-                    <p className="userRole">Angel Investor</p>
+                    <h3 className="userName">{userProfile?.full_name || "N/A"}</h3>
+                    <p className="userRole">{userProfile?.role || "No Job Role Provided"}</p>
                   </div>
                   <div className="statsSection">
-                    <div className="statRow">
-                      <span className="statName">Investments Made</span>
-                      <span className="statValue">8</span>
-                    </div>
-                    <div className="statRow">
-                      <span className="statName">Startups Following</span>
-                      <span className="statValue">24</span>
-                    </div>
+
                     <div className="statRow">
                       <span className="statName">Profile Completion</span>
-                      <span className="statValue">90%</span>
+                      <span className="statValue">{userProfile?.profile_completion}%</span>
                     </div>
                   </div>
                 </div>
@@ -223,21 +260,20 @@ export default function InvestorHome() {
                     <div key={startup.id} className="ideaCard">
                       <div className="ideaCardHeader">
                         <div className="ideaTitleSection">
-                          <h3 className="ideaTitle">{startup.name}</h3>
+                          <h3 className="ideaTitle">{startup.title}</h3>
                           <div className="authorInfo">
                             <div className="authorPicture">
-                              <img src={pp} alt={startup.founder} />
+                              <img src={pp} alt={startup.image} />
                             </div>
-                            <span className="authorName">Founded by {startup.founder}</span>
+                            <span className="authorName">Founded by {startup.username}</span>
                           </div>
                         </div>
                         <div className="startupTags">
-                          <span className="categoryTag">{startup.industry}</span>
-                          <span className="categoryTag">{startup.stage}</span>
+                          <span className="categoryTag">{startup.category}</span>
                         </div>
                       </div>
                       <div className="ideaCardContent">
-                        <p className="ideaDescription">{startup.tagline}</p>
+                        <p className="ideaDescription">{startup.description}</p>
                       </div>
                       <div className="ideaCardFooter">
                         <div className="engagementActions">
@@ -311,32 +347,33 @@ export default function InvestorHome() {
 
       {/* Events Section */}
       <section className="spotlightSection">
-        <div className="Inst-container">
-          <div className="sectionHeader">
-            <h2 className="sectionTitle">Upcoming Pitch Events</h2>
-            <button className="textLink">
-              View All
-              <ChevronRight />
-            </button>
-          </div>
+      <div className="Inst-container">
+        <div className="sectionHeader">
+          <h2 className="sectionTitle">Upcoming Pitch Events</h2>
+          <button className="textLink">
+            View All
+            <ChevronRight />
+          </button>
+        </div>
 
-          <div className="cardsGrid">
-            {[1, 2, 3].map((event) => (
-              <div key={event} className="eventCard">
+        <div className="cardsGrid">
+          {events.length > 0 ? (
+            events.map((event) => (
+              <div key={event.id} className="eventCard">
                 <div className="eventDate">
-                  <span className="eventMonth">May</span>
-                  <span className="eventDay">{10 + event}</span>
+                  <span className="eventMonth">{new Date(event.date).toLocaleString("default", { month: "short" })}</span>
+                  <span className="eventDay">{new Date(event.date).getDate()}</span>
                 </div>
                 <div className="eventDetails">
-                  <h3 className="eventTitle">Startup Pitch Night {event}</h3>
-                  <p className="eventLocation">San Francisco, CA</p>
-                  <p className="eventDescription">
-                    Join us for an evening of innovative pitches from emerging startups in the tech industry.
-                  </p>
-                
+                  <h3 className="eventTitle">{event.title}</h3>
+                  <p className="eventLocation">{event.location}</p>
+                  <p className="eventDescription">{event.description}</p>
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <p>No upcoming active events.</p>
+          )}
           </div>
         </div>
       </section>

@@ -113,32 +113,37 @@ export default function EntHome() {
     
   
   
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/events/upcoming/`);
-        if (!response.ok) throw new Error("Failed to fetch events");
+    useEffect(() => {
+      const fetchEvents = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/events/upcoming/`);
+          if (!response.ok) throw new Error("Failed to fetch events");
+    
+          const data = await response.json();
+    
+          // Filter events to include only those with "Active" status
+          const activeEvents = data.filter(event => event.status === "Active");
+    
+          setEvents(activeEvents);
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        }
+      };
+    
+      fetchEvents();
+    }, [BASE_URL]);
+    
 
-        const data = await response.json();
-        setEvents(data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
+    useEffect(() => {
+      const storedUsername = localStorage.getItem("username");
+  
+      console.log("Username:", storedUsername);
+  
+      if (!storedUsername) {
+        navigate("/");
+        return;
       }
-    };
-
-    fetchEvents();
-  }, [BASE_URL]);
-
-  useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-
-    console.log("Username:", storedUsername);
-
-    if (!storedUsername) {
-      navigate("/");
-      return;
-    }
-    setUsername(storedUsername);
+      setUsername(storedUsername);
 
     const fetchUserProfile = async () => {
       try {
