@@ -33,7 +33,8 @@ export default function EntHome() {
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
   const [isIdeaDialogOpen, setIsIdeaDialogOpen] = useState(false);
   const [isSomeOtherDialogOpen, setIsSomeOtherDialogOpen] = useState(false);
-  
+  const [savedIdeas, setSavedIdeas] = useState([]);
+
 
   const [ideas, setIdeas] = useState([]);
   const [title, setTitle] = useState("");
@@ -45,7 +46,16 @@ export default function EntHome() {
   const [events, setEvents] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-
+  const handleSaveIdea = (idea) => {
+    setSavedIdeas((prevSaved) => {
+      // Prevent duplicate saves
+      if (prevSaved.some((saved) => saved.id === idea.id)) {
+        return prevSaved;
+      }
+      return [...prevSaved, idea];
+    });
+  };
+  
   
 
   useEffect(() => {
@@ -436,9 +446,10 @@ export default function EntHome() {
               <MessageSquare /> {Array.isArray(trend_idea.comments) ? trend_idea.comments.length : 0} {/* Handle comments safely */}
             </button>
           </div>
-          <button className="saveButton">
-            <Star /> Save
-          </button>
+          <button className="saveButton" onClick={() => handleSaveIdea(trend_idea)}>
+  <Star /> Save
+</button>
+
         </div>
       </div>
     ))

@@ -49,7 +49,7 @@ export default function AuthPage() {
           if (response.data.role === "entrepreneur") {
             navigate("/ent-home", { replace: true });
           } else if (response.data.role === "investor") {
-            navigate("/investors", { replace: true });
+            navigate("/investor-home", { replace: true });
           }
         }, 500);
       } else {
