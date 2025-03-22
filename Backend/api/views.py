@@ -101,6 +101,7 @@ class UserProfileCreateView(APIView):
 
 
 class SignInView(APIView):
+    authentication_classes = []  
     permission_classes = [AllowAny]
     def post(self, request):
         username = request.data.get('username')
@@ -123,21 +124,28 @@ class SignInView(APIView):
                     return Response({'error': 'Your account is inactive. Please contact the administrator for assistance.'}, status=status.HTTP_401_UNAUTHORIZED)
 
             if str(user.role).strip().lower() =='investor':
-                if str(user.status).strip().lower()!="active" or str(user.status).strip().lower()!="verified":
+                if str(user.status).strip().lower()=="active" or str(user.status).strip().lower()=="verified":
+                    refresh = RefreshToken.for_user(user)
+                    return Response({
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                        'username': user.username,
+                        'role': user.role,
+                    }, status=status.HTTP_200_OK)
+                else:
                     return Response({'error': 'contact Admin'}, status=status.HTTP_401_UNAUTHORIZED)
+       
             # Use check_password to verify the password
             if not check_password(password, user.password):
                 return Response({'error': 'Your account is inactive or not verified. Please contact the administrator for assistance.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-            # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'username': user.username,
-                'role': user.role,
-            }, status=status.HTTP_200_OK)
-
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'username': user.username,
+                    'role': user.role,
+                }, status=status.HTTP_200_OK)
+            return Response({'error': 'contact Admin'}, status=status.HTTP_401_UNAUTHORIZED)
         except UserProfile.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
