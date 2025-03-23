@@ -22,6 +22,15 @@ export default function InvestorHome() {
   const dropdownRef = useRef(null);
   const [events, setEvents] = useState([]);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    console.log("Logging out..."); // Check if this logs when clicked
+    // Perform logout logic here
+    // Example: Clearing tokens and redirecting
+    localStorage.removeItem("token"); // If using JWT
+    window.location.href = "/"; // Redirect to login page
+  };
+  
   useEffect(() => {
     const fetchTrendingIdeas = async () => {
       setLoading(true);
@@ -131,7 +140,7 @@ export default function InvestorHome() {
               </button>
               <div className="user-avatar-container" ref={dropdownRef}>
                   <div className="userAvatar" onClick={() => setIsOpen(!isOpen)}>
-                    <img src={pp} alt="User" />
+                  <img src={userProfile?.profile_picture || pp} alt="user" />
                   </div>
               </div>
             </div>
@@ -562,13 +571,14 @@ export default function InvestorHome() {
         </div>
       )}
 
-      {isOpen && (
-              <div className="dropdown-menu">
-                <ul>
-                  <li className="logout">Logout</li>
-                </ul>
-              </div>
-      )}
+{isOpen && (
+  <div className="dropdown-menu">
+    <ul>
+      <li className="logout" onClick={handleLogout}>Logout</li>
+    </ul>
+  </div>
+)}
+
     </div>
   );
 }

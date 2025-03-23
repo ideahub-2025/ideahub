@@ -17,6 +17,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  
 
   const handleSignIn = async () => {
     if (loading) return; // Prevent multiple submissions

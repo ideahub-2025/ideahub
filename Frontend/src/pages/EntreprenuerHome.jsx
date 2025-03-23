@@ -45,7 +45,14 @@ export default function EntHome() {
   
   const [events, setEvents] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  const handleLogout = () => {
+    console.log("Logging out..."); // Check if this logs when clicked
+    // Perform logout logic here
+    // Example: Clearing tokens and redirecting
+    localStorage.removeItem("token"); // If using JWT
+    window.location.href = "/"; // Redirect to login page
+  };
+  
   const handleSaveIdea = (idea) => {
     setSavedIdeas((prevSaved) => {
       // Prevent duplicate saves
@@ -291,7 +298,7 @@ export default function EntHome() {
               </button>
               <div className="user-avatar-container" ref={dropdownRef}>
                 <div className="userAvatar" onClick={() => setIsOpen(!isOpen)}>
-                  <img src={pp} alt="User" />
+                  <img src={userProfile?.profile_picture || pp} alt="Profile" />
                 </div>
               </div>
             </div>
@@ -805,13 +812,15 @@ export default function EntHome() {
         </div>
       )}
 
-      {isOpen && (
-              <div className="dropdown-menu">
-                <ul>
-                  <li className="logout">Logout</li>
-                </ul>
-              </div>
-      )}
+{isOpen && (
+  <div className="dropdown-menu">
+    <ul>
+      <li className="logout" onClick={handleLogout}>Logout</li>
+    </ul>
+  </div>
+)}
+
+
     </div>    
   )
 }
