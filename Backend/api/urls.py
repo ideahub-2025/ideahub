@@ -1,6 +1,7 @@
 from django.urls import path, include
-from .views import InvestorProfileView, CreateEventView, UpcomingEventsView,UpdateUserProfile,InvestorsTrendingIdeaView, UpdateAdminUserView,IdeaListCreateViewpost, get_user_details, UpdateInvestorStatusView, TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView,UpdateEventView, UpdateEntrepreneurStatusView
+from .views import save_idea, get_saved_ideas, remove_saved_idea, InvestorProfileView, CreateEventView, UpcomingEventsView,UpdateUserProfile,InvestorsTrendingIdeaView, UpdateAdminUserView,IdeaListCreateViewpost, get_user_details, UpdateInvestorStatusView, TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView,UpdateEventView, UpdateEntrepreneurStatusView
 from rest_framework.routers import DefaultRouter
+
 
 router = DefaultRouter()
 router.register(r'investors', InvestorViewSet)
@@ -27,7 +28,9 @@ urlpatterns = [
     # path('events/all/', AllEventsView.as_view(), name='all-events'),
     path('userprofile/<str:username>/update/', UpdateUserProfile.as_view(), name='update-user-profile'),
     path('investors-trending-ideas/', InvestorsTrendingIdeaView.as_view(), name='investors-trending-ideas'),
-    path('investors-profile/', InvestorProfileView.as_view(), name='investors-profile')
-  
+    path('investors-profile/', InvestorProfileView.as_view(), name='investors-profile'),
+     path("save-idea/", save_idea, name="save-idea"),
+    path("saved-ideas/", get_saved_ideas, name="saved-ideas"),
+    path("remove-saved-idea/<int:idea_id>/", remove_saved_idea, name="remove-saved-idea"),
 ]
 

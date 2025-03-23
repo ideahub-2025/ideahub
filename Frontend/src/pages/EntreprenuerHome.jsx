@@ -45,6 +45,10 @@ export default function EntHome() {
   
   const [events, setEvents] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+
+  
+
   const handleLogout = () => {
     console.log("Logging out..."); // Check if this logs when clicked
     // Perform logout logic here
@@ -52,16 +56,57 @@ export default function EntHome() {
     localStorage.removeItem("token"); // If using JWT
     window.location.href = "/"; // Redirect to login page
   };
+
+  const handleSaveIdea = async (idea) => {
+    try {
+      const username = localStorage.getItem("username"); // Get logged-in username
+      const isSaved = savedIdeas.some((saved) => saved.id === idea.id);
   
-  const handleSaveIdea = (idea) => {
-    setSavedIdeas((prevSaved) => {
-      // Prevent duplicate saves
-      if (prevSaved.some((saved) => saved.id === idea.id)) {
-        return prevSaved;
+      if (isSaved) {
+        // If already saved, remove it
+        await fetch(`http://localhost:8000/api/remove-saved-idea/${idea.id}/?username=${username}`, {
+          method: "DELETE",
+        });
+  
+        setSavedIdeas((prevSaved) => prevSaved.filter((saved) => saved.id !== idea.id));
+      } else {
+        // If not saved, add it
+        const response = await fetch("http://localhost:8000/api/save-idea/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, idea_id: idea.id }),
+        });
+  
+        if (response.ok) {
+          setSavedIdeas((prevSaved) => [...prevSaved, idea]);
+        }
       }
-      return [...prevSaved, idea];
-    });
+    } catch (error) {
+      console.error("Error saving/removing idea:", error);
+    }
   };
+  
+  const fetchSavedIdeas = async () => {
+    try {
+      const username = localStorage.getItem("username");
+      const response = await fetch(`http://localhost:8000/api/saved-ideas/?username=${username}`);
+      const data = await response.json();
+  
+      if (response.ok) {
+        setSavedIdeas(data);
+      } else {
+        console.error("Error fetching saved ideas:", data.error);
+      }
+    } catch (error) {
+      console.error("Failed to fetch saved ideas:", error);
+    }
+  };
+  
+  // Fetch saved ideas when the component loads
+  useEffect(() => {
+    fetchSavedIdeas();
+  }, []);
+  
   
    const [isOpen, setIsOpen] = useState(false);
    const dropdownRef = useRef(null);
@@ -462,9 +507,14 @@ export default function EntHome() {
               <MessageSquare /> {Array.isArray(trend_idea.comments) ? trend_idea.comments.length : 0} {/* Handle comments safely */}
             </button>
           </div>
-          <button className="saveButton" onClick={() => handleSaveIdea(trend_idea)}>
-  <Star /> Save
-</button>
+                <button
+        className="saveButton"
+        onClick={() => handleSaveIdea(trend_idea)}
+        style={{ color: savedIdeas.some((saved) => saved.id === trend_idea.id) ? "gold" : "black" }}
+      >
+        <Star /> {savedIdeas.some((saved) => saved.id === trend_idea.id) ? "Saved" : "Save"}
+      </button>
+
 
         </div>
       </div>
@@ -539,12 +589,49 @@ export default function EntHome() {
 
 
                 {/* Saved Tab */}
+                {/* Saved Tab */}
                 <div className={`tabPanel ${activeTab === "saved" ? "tabPanelActive" : ""}`}>
-                  <div className="card">
-                    <div className="cardHeader">
-                      <h2 className="cardTitle">Saved Ideas</h2>
-                      <p className="cardDescription">Ideas you've saved for later reference.</p>
-                    </div>
+                  {savedIdeas.length > 0 ? (
+                    savedIdeas.map((idea) => (
+                      <div key={idea.id} className="ideaCard">
+                        <div className="ideaCardHeader">
+                          <div className="ideaTitleSection">
+                            <h3 className="ideaTitle">{idea.title}</h3>
+                            <div className="authorInfo">
+                              <div className="authorPicture">
+                                <img
+                                  src={
+                                    idea.image && idea.image.startsWith("/media/")
+                                      ? `http://localhost:8000${idea.image}`
+                                      : pp
+                                  }
+                                  alt={idea.username || "Unknown Author"}
+                                  onError={(e) => (e.target.src = pp)}
+                                />
+                              </div>
+                              <span className="authorName">{idea.username || "Anonymous"}</span>
+                            </div>
+                          </div>
+                          <span className="categoryTag">{idea.category || "Uncategorized"}</span>
+                        </div>
+
+                        <div className="ideaCardContent">
+                          <p className="ideaDescription">{idea.description || "No description available."}</p>
+                        </div>
+
+                        <div className="ideaCardFooter">
+                          <div className="engagementActions">
+                            <button className="engagementButton">
+                              <ThumbsUp /> {idea.like_count || 0}
+                            </button>
+                            <button className="engagementButton" onClick={() => setIsCommentDialogOpen(true)}>
+                              <MessageSquare /> {Array.isArray(idea.comments) ? idea.comments.length : 0}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
                     <div className="emptyState">
                       <div className="emptyStateIcon">
                         <Star />
@@ -555,8 +642,10 @@ export default function EntHome() {
                         Explore Trending Ideas
                       </button>
                     </div>
-                  </div>
+                  )}
                 </div>
+
+                
               </div>
             </div>
           </div>

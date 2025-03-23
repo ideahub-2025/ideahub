@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import uuid
 
 class UserProfile(models.Model):
     full_name = models.CharField(max_length=255)
@@ -148,6 +149,7 @@ class Event(models.Model):
         return self.title
 
 class Idea(models.Model):
+    custom_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # Us
     CATEGORY_CHOICES = [
         ('tech', 'Technology'),
         ('health', 'Healthcare'),
@@ -179,3 +181,18 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.idea.title}"
+
+
+class SavedIdea(models.Model):
+    username = models.CharField(max_length=100)  # Reference username instead of User
+    idea = models.ForeignKey("Idea", on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("username", "idea")  # Ensure an idea is saved only once per user
+
+    def __str__(self):
+        return f"{self.username} saved {self.idea.title}"
+
+
+
