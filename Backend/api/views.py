@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import serializers, viewsets,generics, permissions, status
 from django.contrib.auth.hashers import make_password
-from .models import UserProfile, Entrepreneur, Investor, AdminUser
+from .models import UserProfile, Entrepreneur, Investor, AdminUser, SavedIdea
 from .serializers import UserProfileSerializer, InvestorSerializer, EntrepreneurSerializer
 import re
 from django.contrib.auth import authenticate
@@ -41,7 +41,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from .models import Event
 from .serializers import EventSerializer
-
+from .serializers import SavedIdeaSerializer
 from rest_framework.authentication import TokenAuthentication
 from .permissions import IsOwnerOrReadOnly
 
@@ -1008,4 +1008,107 @@ class InvestorProfileView(APIView):
         except Exception as e:
             logger.error(f"API Error: {str(e)}")
             return Response({'error': 'API error', 'message': str(e)}, status=500)
+
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def save_idea(request):
+    username = request.data.get("username")
+    idea_id = request.data.get("idea_id")  # This should match the "id" field in MongoDB
+
+    print("IDEA USERNAME:", username)
+    print("IDEA ID:", idea_id)
+
+    if not username or not idea_id:
+        return Response({"error": "Username and Idea ID are required"}, status=400)
+
+    # Connect to MongoDB collection
+    client = MongoClient(settings.MONGO_URI)  # Update with your MongoDB connection string
+    db = client[settings.MONGO_DB_NAME]
+    
+    ideas_collection = db["api_idea"]
+
+    # Query the document using the "id" field (UUID stored in MongoDB)
+    idea = ideas_collection.find_one({"id": idea_id})
+
+    if not idea:
+        return Response({"error": "Idea not found"}, status=404)
+
+    # Connect to saved ideas collection
+    saved_ideas_collection = db["api_saved_ideas"]
+
+    # Check if idea is already saved
+    existing_save = saved_ideas_collection.find_one({"username": username, "idea_id": idea_id})
+
+    if existing_save:
+        return Response({"message": "Idea already saved"}, status=200)
+
+    # Save the idea
+    saved_ideas_collection.insert_one({"username": username, "idea_id": idea_id})
+
+    return Response({"message": "Idea saved successfully"}, status=201)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_saved_ideas(request):
+    username = request.GET.get("username")
+
+    if not username:
+        return Response({"error": "Username is required"}, status=400)
+
+    # Connect to MongoDB
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB_NAME]
+    
+    saved_ideas_collection = db["api_saved_ideas"]
+    ideas_collection = db["api_idea"]
+
+    # Fetch saved ideas by username
+    saved_ideas = saved_ideas_collection.find({"username": username})
+
+    # Extract list of saved idea IDs
+    saved_idea_ids = [s["idea_id"] for s in saved_ideas]
+
+    # Fetch full idea details
+    ideas = list(ideas_collection.find({"id": {"$in": saved_idea_ids}}))
+
+    # Convert MongoDB documents to JSON response
+    saved_ideas_data = [
+        {
+            "id": str(idea["id"]),
+            "title": idea["title"],
+            "description": idea["description"],
+            "category": idea["category"],
+            "image": idea["image"] if "image" in idea and idea["image"] else None,
+        }
+        for idea in ideas
+    ]
+
+    return Response(saved_ideas_data)
+
+@api_view(["DELETE"])
+@permission_classes([AllowAny])
+def remove_saved_idea(request, idea_id):
+    username = request.GET.get("username")
+
+    if not username:
+        return Response({"error": "Username is required"}, status=400)
+
+    # Connect to MongoDB
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB_NAME]
+    
+    saved_ideas_collection = db["api_saved_ideas"]
+
+    # Delete the saved idea
+    result = saved_ideas_collection.delete_one({"username": username, "idea_id": idea_id})
+
+    if result.deleted_count == 0:
+        return Response({"error": "Saved idea not found"}, status=404)
+
+    return Response({"message": "Idea removed from saved items"}, status=200)
+
+
+
 

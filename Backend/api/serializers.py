@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from .models import UserProfile, Investor, Entrepreneur # Ensure the correct import
 from .models import Event
-from .models import Idea
+from .models import Idea, SavedIdea
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,3 +58,9 @@ class EntrepreneurStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entrepreneur
         fields = ['status']
+
+
+class SavedIdeaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavedIdea
+        fields = "__all__"  # Serialize all fields
