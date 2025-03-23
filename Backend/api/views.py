@@ -1108,7 +1108,3 @@ def remove_saved_idea(request, idea_id):
         return Response({"error": "Saved idea not found"}, status=404)
 
     return Response({"message": "Idea removed from saved items"}, status=200)
-
-
-
-

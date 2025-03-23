@@ -33,4 +33,3 @@ urlpatterns = [
     path("saved-ideas/", get_saved_ideas, name="saved-ideas"),
     path("remove-saved-idea/<int:idea_id>/", remove_saved_idea, name="remove-saved-idea"),
 ]
-
