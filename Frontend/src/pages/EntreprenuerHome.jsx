@@ -6,6 +6,8 @@ import "../App.css";
 import { Camera, Bell, MessageSquare, Search, Lightbulb, PlusCircle, ChevronRight, Star, ThumbsUp } from "lucide-react";
 import Entreprenuer from "../assets/ENT.jpg";
 import pp from "../assets/defaultpp.jpg";
+import MessagesDropdown from './MessagesDropdown';
+import ChatPopup from './MessagePopup';
 
 export default function EntHome() {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ export default function EntHome() {
   const [events, setEvents] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const [activeChats, setActiveChats] = useState([]);
 
   
 
@@ -315,6 +318,22 @@ export default function EntHome() {
     setActiveTab(tab);
   };
 
+/*For Message*/
+    // Add a function to handle opening new chats
+    const handleChatOpen = (receiver, ideaId) => {
+      // Check if chat is already open
+      if (!activeChats.some(chat => chat.receiver === receiver && chat.ideaId === ideaId)) {
+        setActiveChats([...activeChats, { receiver, ideaId }]);
+      }
+    };
+
+    // Add a function to handle closing chats
+    const handleChatClose = (receiver, ideaId) => {
+      setActiveChats(activeChats.filter(
+        chat => !(chat.receiver === receiver && chat.ideaId === ideaId)
+      ));
+    };
+
 
 
   return (
@@ -338,9 +357,10 @@ export default function EntHome() {
               <button className="iconButton">
                 <Bell />
               </button>
-              <button className="iconButton">
-                <MessageSquare />
-              </button>
+              <MessagesDropdown 
+                username={username} 
+                onChatOpen={handleChatOpen} 
+              />
               <div className="user-avatar-container" ref={dropdownRef}>
                 <div className="userAvatar" onClick={() => setIsOpen(!isOpen)}>
                   <img src={userProfile?.profile_picture || pp} alt="Profile" />
@@ -502,10 +522,7 @@ export default function EntHome() {
             <button className="engagementButton">
               <ThumbsUp /> {trend_idea.like_count || 0} {/* Ensure like count is displayed */}
             </button>
-            <button className="engagementButton"
-            onClick={() => setIsCommentDialogOpen(true)} >
-              <MessageSquare /> {Array.isArray(trend_idea.comments) ? trend_idea.comments.length : 0} {/* Handle comments safely */}
-            </button>
+            
           </div>
                 <button
         className="saveButton"
@@ -563,11 +580,7 @@ export default function EntHome() {
               <ThumbsUp />
               {idea.like_count || 0}  {/* Ensure likes count is displayed */}
             </button>
-            <button className="engagementButton"
-            onClick={() => setIsCommentDialogOpen(true)}>
-              <MessageSquare />
-              {idea.comments ? idea.comments.length : 0} {/* Show comment count */}
-            </button>
+            
           </div>
         </div>
       </div>
@@ -901,15 +914,29 @@ export default function EntHome() {
         </div>
       )}
 
-{isOpen && (
-  <div className="dropdown-menu">
-    <ul>
-      <li className="logout" onClick={handleLogout}>Logout</li>
-    </ul>
-  </div>
-)}
+        {isOpen && (
+          <div className="dropdown-menu">
+            <ul>
+              <li className="logout" onClick={handleLogout}>Logout</li>
+            </ul>
+          </div>
+        )}
+
+        <div className="chat-windows">
+          {activeChats.map((chat, index) => (
+            <ChatPopup
+              key={`${chat.receiver}-${chat.ideaId}`}
+              receiver={chat.receiver}
+              ideaId={chat.ideaId}
+              onClose={() => handleChatClose(chat.receiver, chat.ideaId)}
+            />
+          ))}
+        </div>
 
 
-    </div>    
+    </div>  
+    
+    
+    
   )
 }

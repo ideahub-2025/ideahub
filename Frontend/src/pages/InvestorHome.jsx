@@ -4,6 +4,9 @@ import { Bell, MessageSquare, Search, Lightbulb, Filter, ChevronRight, Star, Thu
 import '../App.css'
 import Entreprenuer from "../assets/ENT.jpg"
 import pp from "../assets/defaultpp.jpg"
+import MessagesDropdown from './MessagesDropdown';
+import ChatPopup from './MessagePopup';
+
 
 export default function InvestorHome() {
   const [username, setUsername] = useState(null);
@@ -22,6 +25,9 @@ export default function InvestorHome() {
   const dropdownRef = useRef(null);
   const [events, setEvents] = useState([]);
   const navigate = useNavigate();
+
+  const [activeChats, setActiveChats] = useState([]);
+
 
   const handleLogout = () => {
     console.log("Logging out..."); // Check if this logs when clicked
@@ -114,6 +120,30 @@ export default function InvestorHome() {
     fetchUserProfile();
   }, [navigate]);
 
+
+    /*For message*/
+
+
+        // Add a function to handle opening new chats
+        const handleChatOpen = (receiver, ideaId) => {
+          // Check if chat is already open
+          if (!activeChats.some(chat => chat.receiver === receiver && chat.ideaId === ideaId)) {
+            setActiveChats([...activeChats, { receiver, ideaId }]);
+          }
+        };
+  
+        // Add a function to handle closing chats
+        const handleChatClose = (receiver, ideaId) => {
+          setActiveChats(activeChats.filter(
+            chat => !(chat.receiver === receiver && chat.ideaId === ideaId)
+          ));
+        };
+  
+        // Update the message button click handler
+        const handleMessageClick = (entrepreneur, ideaId) => {
+          handleChatOpen(entrepreneur, ideaId);
+        };
+
   return (
     <div>
       {/* Header/Navigation */}
@@ -135,9 +165,10 @@ export default function InvestorHome() {
               <button className="iconButton">
                 <Bell />
               </button>
-              <button className="iconButton">
-                <MessageSquare />
-              </button>
+              <MessagesDropdown 
+                username={username} 
+                onChatOpen={handleChatOpen} 
+              />
               <div className="user-avatar-container" ref={dropdownRef}>
                   <div className="userAvatar" onClick={() => setIsOpen(!isOpen)}>
                   <img src={userProfile?.profile_picture || pp} alt="user" />
@@ -302,7 +333,14 @@ export default function InvestorHome() {
                             {startup.views} views
                           </span>
                         </div>
-                        <button className="accentButton">Message</button>
+                        
+                        <button 
+                          className="messageButton"
+                          onClick={() => handleMessageClick(startup.username, startup.id)}
+                        >
+                          Message
+                        </button>
+
                       </div>
                     </div>
                   ))}
@@ -578,7 +616,20 @@ export default function InvestorHome() {
     </ul>
   </div>
 )}
-
+      <div className="chat-windows">
+        {activeChats.map((chat, index) => (
+          <ChatPopup
+            key={`${chat.receiver}-${chat.ideaId}`}
+            receiver={chat.receiver}
+            ideaId={chat.ideaId}
+            onClose={() => handleChatClose(chat.receiver, chat.ideaId)}
+          />
+        ))}
+      </div>
     </div>
+
+
+
+
   );
 }
