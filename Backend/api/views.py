@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import serializers, viewsets,generics, permissions, status
 from django.contrib.auth.hashers import make_password
-from .models import UserProfile, Entrepreneur, Investor, AdminUser, SavedIdea
+from .models import UserProfile, Entrepreneur, Investor, AdminUser, SavedIdea, Like
 from .serializers import UserProfileSerializer, InvestorSerializer, EntrepreneurSerializer
 import re
 from django.contrib.auth import authenticate
@@ -1111,4 +1111,59 @@ def remove_saved_idea(request, idea_id):
 
 
 
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def toggle_like(request):
+    username = request.data.get("username")
+    idea_id = request.data.get("idea_id")
 
+    if not username or not idea_id:
+        return Response({"error": "Username and Idea ID are required"}, status=400)
+
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB_NAME]
+
+    likes_collection = db["api_likes"]
+    ideas_collection = db["api_idea"]
+
+    # Check if user has already liked this idea
+    existing_like = likes_collection.find_one({"username": username, "idea_id": idea_id})
+
+    if existing_like:
+        # Unlike (remove the like)
+        likes_collection.delete_one({"username": username, "idea_id": idea_id})
+        ideas_collection.update_one({"id": idea_id}, {"$inc": {"like_count": -1}})
+        return Response({"message": "Like removed", "liked": False}, status=200)
+    else:
+        # Like the idea
+        likes_collection.insert_one({"username": username, "idea_id": idea_id})
+        ideas_collection.update_one({"id": idea_id}, {"$inc": {"like_count": 1}})
+        return Response({"message": "Idea liked", "liked": True}, status=201)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def check_like_status(request, idea_id, username):
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB_NAME]
+
+    likes_collection = db["api_likes"]
+    is_liked = likes_collection.find_one({"username": username, "idea_id": idea_id}) is not None
+
+    return Response({"liked": is_liked})
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_liked_ideas(request, username):
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB_NAME]
+
+    likes_collection = db["api_likes"]
+
+    # Get all liked ideas for this user
+    liked_ideas = likes_collection.find({"username": username})
+
+    # Extract the list of idea IDs
+    liked_idea_ids = [like["idea_id"] for like in liked_ideas]
+
+    return Response({"liked_ideas": liked_idea_ids})

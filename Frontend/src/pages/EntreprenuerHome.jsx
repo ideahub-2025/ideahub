@@ -45,7 +45,75 @@ export default function EntHome() {
   
   const [events, setEvents] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [likedIdeas, setLikedIdeas] = useState([]); // Store liked ideas
 
+  const fetchLikedIdeas = async () => {
+    try {
+      const username = localStorage.getItem("username");
+  
+      if (!username) return;
+  
+      const response = await fetch(`http://localhost:8000/api/get-liked-ideas/${username}/`);
+      
+      if (!response.ok) {
+        console.error("Failed to fetch liked ideas:", response.statusText);
+        return;
+      }
+  
+      const data = await response.json();
+  
+      console.log("Fetched Liked Ideas:", data); // ✅ Debugging line
+  
+      setLikedIdeas(data.liked_ideas || []);
+    } catch (error) {
+      console.error("Error fetching liked ideas:", error);
+    }
+  };
+  
+  // 🔹 Fetch liked ideas when component mounts
+  useEffect(() => {
+    fetchLikedIdeas();
+  }, []);
+  
+  
+  const handleLikeIdea = async (idea) => {
+  try {
+    const username = localStorage.getItem("username");
+
+    const response = await fetch("http://localhost:8000/api/toggle-like/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, idea_id: idea.id }),
+    });
+
+    const data = await response.json();
+
+    console.log("Toggle Like API Response:", data); // ✅ Debugging line
+
+    if (response.ok) {
+      setTrendingIdeas((prevIdeas) =>
+        prevIdeas.map((item) =>
+          item.id === idea.id
+            ? { 
+                ...item, 
+                like_count: data.liked 
+                  ? item.like_count + 1 
+                  : Math.max(0, item.like_count - 1) // 🔹 Prevents negative count
+              }
+            : item
+        )
+      );
+
+      setLikedIdeas((prevLiked) =>
+        data.liked ? [...prevLiked, idea.id] : prevLiked.filter((id) => id !== idea.id)
+      );
+
+      console.log("Updated liked ideas:", likedIdeas);
+    }
+  } catch (error) {
+    console.error("Error liking/unliking idea:", error);
+  }
+};
 
   
 
@@ -499,9 +567,17 @@ export default function EntHome() {
         </div>
         <div className="ideaCardFooter">
           <div className="engagementActions">
-            <button className="engagementButton">
-              <ThumbsUp /> {trend_idea.like_count || 0} {/* Ensure like count is displayed */}
-            </button>
+          <button
+  className="engagementButton"
+  onClick={() => handleLikeIdea(trend_idea)}
+  style={{ color: likedIdeas.includes(trend_idea.id) ? "gold" : "black" }}
+>
+  <ThumbsUp /> {trend_idea.like_count || 0}
+</button>
+
+
+
+
             <button className="engagementButton"
             onClick={() => setIsCommentDialogOpen(true)} >
               <MessageSquare /> {Array.isArray(trend_idea.comments) ? trend_idea.comments.length : 0} {/* Handle comments safely */}

@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import save_idea, get_saved_ideas, remove_saved_idea, InvestorProfileView, CreateEventView, UpcomingEventsView,UpdateUserProfile,InvestorsTrendingIdeaView, UpdateAdminUserView,IdeaListCreateViewpost, get_user_details, UpdateInvestorStatusView, TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView,UpdateEventView, UpdateEntrepreneurStatusView
+from .views import get_liked_ideas, save_idea, get_saved_ideas,check_like_status,toggle_like, remove_saved_idea, InvestorProfileView, CreateEventView, UpcomingEventsView,UpdateUserProfile,InvestorsTrendingIdeaView, UpdateAdminUserView,IdeaListCreateViewpost, get_user_details, UpdateInvestorStatusView, TrendingIdeaView,UserProfileCreateView, EntrepreneurProfileView, SignInView,AdminLoginView, forgot_password, reset_password, EntrepreneurProfileCreateView,InvestorViewSet ,IdeaListCreateView,UpdateEventView, UpdateEntrepreneurStatusView
 from rest_framework.routers import DefaultRouter
 
 
@@ -32,5 +32,8 @@ urlpatterns = [
      path("save-idea/", save_idea, name="save-idea"),
     path("saved-ideas/", get_saved_ideas, name="saved-ideas"),
     path("remove-saved-idea/<int:idea_id>/", remove_saved_idea, name="remove-saved-idea"),
+    path("toggle-like/", toggle_like, name="toggle-like"),
+    path("check-like-status/<str:idea_id>/<str:username>/", check_like_status, name="check-like-status"),
+    path("get-liked-ideas/<str:username>/", get_liked_ideas, name="get-liked-ideas"),
 ]
 
