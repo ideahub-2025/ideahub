@@ -196,3 +196,9 @@ class SavedIdea(models.Model):
 
 
 
+class Like(models.Model):
+    username = models.CharField(max_length=100)  # Track which user liked it
+    idea = models.ForeignKey(Idea, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ("username", "idea")  # Prevent duplicate likes
